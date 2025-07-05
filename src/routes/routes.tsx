@@ -4,15 +4,19 @@ import DashboardLayout from "../layout/dashboardLayout";
 import UserManagement from "../components/dashboard/user-management";
 import PaywallControl from "../components/dashboard/paywall-control";
 import CoffeeShopManagement from "../components/dashboard/coffee-shop-management";
+import AccessDenied from "../pages/error/ForbiddenAccess";
+import ErrorPage from "../pages/error/errorPage";
 
 const router = createBrowserRouter([
     {
         path:'/',
-        element:<App/>
+        element:<App/>,
+        errorElement:<ErrorPage/>
     },
     {
         path:'/dashboard/admin',
         element:<DashboardLayout/>,
+        errorElement:<ErrorPage/>,
         children:[
         {
             path:'user-management',
@@ -27,6 +31,11 @@ const router = createBrowserRouter([
             element:<CoffeeShopManagement/>
         }
     ]
+    },
+    {
+
+        path:'/access-denied',
+        element:<AccessDenied/>
     }
 ])
 
