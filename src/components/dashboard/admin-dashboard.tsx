@@ -19,7 +19,7 @@ const AdminDashboard =() => {
     <SidebarProvider defaultOpen={true}>
       <div className="relative flex min-h-screen w-full">
         <AdminSidebar />
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden mb-20">
           <Outlet/>
           {/* {activeView === "users" && <UserManagement onViewUser={handleViewUser} />}
           {activeView === "paywall" && <PaywallControl />} */}

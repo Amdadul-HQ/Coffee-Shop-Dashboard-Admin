@@ -214,25 +214,25 @@ const CoffeeShopManagement=() => {
         {/* Main Content Tabs */}
         <Tabs defaultValue="shops" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="shops">All Shops</TabsTrigger>
-            <TabsTrigger value="pending">Pending Approval</TabsTrigger>
-            <TabsTrigger value="flagged">Flagged Content</TabsTrigger>
-            <TabsTrigger value="duplicates">Duplicates</TabsTrigger>
+            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="shops">All Shops</TabsTrigger>
+            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="pending">Pending Approval</TabsTrigger>
+            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="flagged">Flagged Content</TabsTrigger>
+            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="duplicates">Duplicates</TabsTrigger>
           </TabsList>
 
           {/* All Shops Tab */}
           <TabsContent value="shops" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+            <div className="flex md:flex-row flex-col md:gap-y-0 gap-y-3 items-center justify-between">
+              <div className="flex items-center space-x-2 w-full">
                 <Search className="h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search coffee shops..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-[300px]"
+                  className="flex-1"
                 />
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center md:justify-end justify-between w-full space-x-2">
                 <Button variant="outline" onClick={handleBulkImport}>
                   <Upload className="h-4 w-4 mr-2" />
                   Import
