@@ -3,6 +3,7 @@ import { Button } from "../../components/ui/button"
 import { Mail, Eye, EyeOff, Lock } from "lucide-react"
 import { useState } from "react"
 import { Input } from "../../components/ui/input"
+import { Link } from "react-router-dom"
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -49,11 +50,13 @@ export default function LoginForm() {
             Forgot Password?
           </div>
 
-          <Button
+          <Link to={'/dashboard/admin/user-management'}>
+            <Button
             className="w-full bg-yellow-400 text-black hover:bg-yellow-300 font-semibold"
           >
             Sing In
           </Button>
+          </Link>
 
           <div className="flex items-center gap-2 text-sm text-zinc-400">
             <div className="h-px flex-1 bg-zinc-700" />
