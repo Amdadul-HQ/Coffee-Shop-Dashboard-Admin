@@ -6,6 +6,7 @@ import PaywallControl from "../components/dashboard/paywall-control";
 import CoffeeShopManagement from "../components/dashboard/coffee-shop-management";
 import AccessDenied from "../pages/error/ForbiddenAccess";
 import ErrorPage from "../pages/error/errorPage";
+import AnalyticsDashboard from "../components/dashboard/analytics-and-tracking";
 
 const router = createBrowserRouter([
     {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
         element:<DashboardLayout/>,
         errorElement:<ErrorPage/>,
         children:[
+        {
+            path:'analytics-and-tracking',
+            element:<AnalyticsDashboard/>
+        },
         {
             path:'user-management',
             element:<UserManagement/>

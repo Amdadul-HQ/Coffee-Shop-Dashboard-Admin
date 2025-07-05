@@ -1,4 +1,4 @@
-import { Users, Shield, Settings, Store } from "lucide-react"
+import { Users, Shield, Settings, Store, ChartNoAxesCombined } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -15,6 +15,12 @@ import { NavLink, useLocation } from "react-router-dom"
 
 const AdminSidebar =() => {
   const menuItems = [
+    {
+      title:"Analytics & Usage Tracking",
+      icon: ChartNoAxesCombined,
+      view: "analytics" as const,
+      path: "analytics-and-tracking"
+    },
     {
       title: "User Management",
       icon: Users,
