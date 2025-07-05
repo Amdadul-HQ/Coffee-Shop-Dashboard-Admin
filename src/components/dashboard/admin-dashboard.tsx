@@ -21,8 +21,6 @@ const AdminDashboard =() => {
         <AdminSidebar />
         <main className="flex-1 overflow-hidden mb-20">
           <Outlet/>
-          {/* {activeView === "users" && <UserManagement onViewUser={handleViewUser} />}
-          {activeView === "paywall" && <PaywallControl />} */}
           {activeView === "user-detail" && selectedUserId && (
             <UserDetail userId={selectedUserId} onBack={handleBackToUsers} />
           )}
