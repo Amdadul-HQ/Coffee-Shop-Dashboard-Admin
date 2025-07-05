@@ -3,6 +3,7 @@ import { SidebarProvider } from "../ui/sidebar"
 import AdminSidebar from "./admin-sidebar"
 import UserDetail from "./user-detail"
 import { Outlet } from "react-router-dom"
+import MobileNavbar from "./admin-menu-for-mobile"
 
 const AdminDashboard =() => {
   const [activeView, setActiveView] = useState<"users" | "paywall" | "user-detail">("users")
@@ -16,7 +17,7 @@ const AdminDashboard =() => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full">
+      <div className="relative flex min-h-screen w-full">
         <AdminSidebar />
         <main className="flex-1 overflow-hidden">
           <Outlet/>
@@ -26,6 +27,7 @@ const AdminDashboard =() => {
             <UserDetail userId={selectedUserId} onBack={handleBackToUsers} />
           )}
         </main>
+        <MobileNavbar/>
       </div>
     </SidebarProvider>
   )
