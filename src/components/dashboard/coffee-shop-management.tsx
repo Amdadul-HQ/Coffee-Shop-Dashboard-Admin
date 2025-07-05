@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
@@ -129,7 +130,7 @@ const duplicateGroups = [
 
 const CoffeeShopManagement=() => {
   const [selectedShops, setSelectedShops] = useState<number[]>([])
-  const [editingShop, setEditingShop] = useState<any>(null)
+  const [, setEditingShop] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState("")
 
   const handleSelectShop = (shopId: number) => {
