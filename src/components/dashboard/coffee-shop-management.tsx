@@ -214,10 +214,10 @@ const CoffeeShopManagement=() => {
         {/* Main Content Tabs */}
         <Tabs defaultValue="shops" className="space-y-4">
           <TabsList>
-            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="shops">All Shops</TabsTrigger>
-            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="pending">Pending Approval</TabsTrigger>
-            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="flagged">Flagged Content</TabsTrigger>
-            <TabsTrigger className="md:text-base text-xs px-2 md:px-3" value="duplicates">Duplicates</TabsTrigger>
+            <TabsTrigger className="md:text-sm text-xs px-2 md:px-3" value="shops">All Shops</TabsTrigger>
+            <TabsTrigger className="md:text-sm text-xs px-2 md:px-3" value="pending">Pending Approval</TabsTrigger>
+            <TabsTrigger className="md:text-sm text-xs px-2 md:px-3" value="flagged">Flagged Content</TabsTrigger>
+            <TabsTrigger className="md:text-sm text-xs px-2 md:px-3" value="duplicates">Duplicates</TabsTrigger>
           </TabsList>
 
           {/* All Shops Tab */}
