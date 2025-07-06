@@ -7,7 +7,7 @@ import { TResponse } from "../../types/CommonTypes";
 
 const baseQuery = fetchBaseQuery(
     {
-    baseUrl:"http://localhost:5000/api/v1",
+    baseUrl:import.meta.env.VITE_BASE_URL,
     credentials:'include',
     prepareHeaders:(headers,{getState})=>{
         const token = (getState() as RootState).auth.token;
@@ -28,7 +28,7 @@ const baseQueryWithRefreshToken : BaseQueryFn<FetchArgs,BaseQueryApi,DefinitionT
     if(result?.error?.status === 401){
         // * send Refresh token
         const res = await fetch(
-          "http://localhost:5000/api/v1/auth/refresh-token",
+          `${import.meta.env.VITE_BASE_URL}/auth/refresh-token`,
           {
             method: "POST",
             credentials: "include",
