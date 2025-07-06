@@ -316,10 +316,6 @@ const analytics = {
         }}
       />
 
-
-      {activeView === "user-detail" && selectedUserId && (
-            <UserDetail userId={selectedUserId} onBack={handleBackToUsers} />
-        )}
     </div>
   )
 }
