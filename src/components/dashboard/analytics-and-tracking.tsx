@@ -105,13 +105,13 @@ const growthData = [
   { date: "Jun", rate: 12.4, newUsers: 1247 },
 ]
 
-const featureUsageOverTime = {
-  Dashboard: [85, 86, 87, 88, 89, 89],
-  "Coffee Shop Search": [72, 73, 74, 75, 76, 76],
-  Reviews: [68, 67, 66, 65, 64, 64],
-  Favorites: [54, 55, 56, 57, 58, 58],
-  "Map View": [50, 51, 51, 52, 52, 52],
-}
+// const featureUsageOverTime = {
+//   Dashboard: [85, 86, 87, 88, 89, 89],
+//   "Coffee Shop Search": [72, 73, 74, 75, 76, 76],
+//   Reviews: [68, 67, 66, 65, 64, 64],
+//   Favorites: [54, 55, 56, 57, 58, 58],
+//   "Map View": [50, 51, 51, 52, 52, 52],
+// }
 
 export default function AnalyticsDashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState<"daily" | "weekly" | "monthly">("daily")
