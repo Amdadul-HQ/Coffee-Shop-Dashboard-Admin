@@ -9,6 +9,7 @@ import { useLogingMutation } from "../../redux/features/auth/authApi"
 import { setUser, TUser } from "../../redux/features/auth/authSlice"
 import { verifyToken } from "../../function/validateToken"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -28,15 +29,22 @@ export default function LoginForm() {
              password: data.password,
            };
            const res = await login(userInfo).unwrap();
-           console.log(await res)
            const user = verifyToken(res.data.token) as TUser;
            dispatch(setUser({ user, token: res.data.token }));
-           navigate(`/dashboard/admin/user-management`);
+           toast.success("Login successful", {
+              description: `Welcome back, ${user.email}`,
+            });
+         // Navigate after short delay (e.g., 2 seconds)
+    setTimeout(() => {
+      navigate(`/dashboard/admin/user-management`);
+    }, 2000);
        }
        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-       catch(error){
-        console.log(error)
-          //  toast.error("Something want wrong",{id:toastId,duration:2000})
+       catch(error:any){
+       toast.error("Login failed", {
+      description:
+        error?.data?.message || "Something went wrong. Please try again.",
+    });
        }
     }
 
