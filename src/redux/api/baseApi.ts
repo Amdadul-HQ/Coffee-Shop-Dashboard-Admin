@@ -10,9 +10,10 @@ const baseQuery = fetchBaseQuery(
     baseUrl:import.meta.env.VITE_BASE_URL,
     credentials:'include',
     prepareHeaders:(headers,{getState})=>{
-        const token = (getState() as RootState).auth.token;
+        const token = (getState() as RootState)?.auth?.token;
+        console.log(token,'basequery')
         if(token){
-            headers.set("authorization",token);
+            headers.set("authorization",`bearer ${token}`);
         }
         return headers;
     }
@@ -56,6 +57,6 @@ const baseQueryWithRefreshToken : BaseQueryFn<FetchArgs,BaseQueryApi,DefinitionT
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithRefreshToken,
-  tagTypes: ["semester", "course"],
+  tagTypes: ["users"],
   endpoints: () => ({}),
 });

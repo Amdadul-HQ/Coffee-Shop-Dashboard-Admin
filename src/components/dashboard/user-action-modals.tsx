@@ -11,36 +11,75 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
+import { useForceLogoutMutation, useGetUserDetailsQuery, useResetPasswordMutation, useUserSuspendMutation, useUserUnSuspendMutation } from "../../redux/features/admin/adminManagementApi"
+import UserDetail from "./user-detail"
 
 interface User {
-  id: string
-  name: string
-  email: string
-  subscription: "free" | "paid"
-  status: "active" | "suspended" | "banned"
+  id: string;
+  name: string;
+  email: string;
+  subscriptionPlan: "free" | "paid";
+  createdAt: string;
+  lastActivity: string;
+  isSuspend: boolean;
+  ratings: number;
+  notes: number;
+  favorites: number;
 }
+
+
+type TActionType = "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
+
 
 interface UserActionModalsProps {
   user: User | null
-  actionType: "suspend" | "reset" | "subscription" | null
+  actionType: TActionType
   onClose: () => void
 }
 
 const UserActionModals =({ user, actionType, onClose }: UserActionModalsProps) => {
   const [reason, setReason] = useState("")
+  const [suspendUser, { isLoading }] = useUserSuspendMutation();
+  const [unSuspenndUser,{isLoading:unSuspendingLoading}] = useUserUnSuspendMutation();
+  const [forceLogout,{isLoading:forceLogoutLoading}] = useForceLogoutMutation()
+  const [resetPassword,{isLoading:resetPassowrdLoading}] = useResetPasswordMutation();
+  const {
+   data,
+   isFetching: isFetchingUser,
+   error: userError,
+ } = useGetUserDetailsQuery({id:user?.id});
   const [newSubscription, setNewSubscription] = useState("")
-
-  const handleSuspend = () => {
+  const handleSuspend = async () => {
     // Handle suspend/unsuspend logic
-    console.log(`${user?.status === "suspended" ? "Unsuspending" : "Suspending"} user:`, user?.id, "Reason:", reason)
+    if(user?.id && actionType === "suspend"){
+      const res = await suspendUser({ id: user.id }).unwrap();
+      console.log("Suspended user:", res);
+    }
+
+    if(user?.id && actionType === "Unsuspend") {
+      const res = await unSuspenndUser({ id: user.id }).unwrap();
+      console.log("UnSuspended user:", res);
+    }
+
+    // console.log(`${user?.isSuspend === "suspended" ? "Unsuspending" : "Suspending"} user:`, user?.id, "Reason:", reason)
     onClose()
     setReason("")
   }
 
-  const handleResetPassword = () => {
+  const handleResetPassword =async () => {
+
+    // force logout
+    if(user?.id && actionType === "force-logout"){
+      const res = await forceLogout({id:user.id})
+      console.log("Force Logout",res)
+    }
+    
     // Handle password reset logic
-    console.log("Resetting password for user:", user?.id)
+    if(user?.id && actionType === "reset"){
+      const res = await resetPassword({id:user.id})
+      console.log("Resetting password for user:",res)
     onClose()
+    }
   }
 
   const handleSubscriptionChange = () => {
@@ -58,9 +97,9 @@ const UserActionModals =({ user, actionType, onClose }: UserActionModalsProps) =
       <Dialog open={actionType === "suspend"} onOpenChange={onClose}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{user.status === "suspended" ? "Unsuspend" : "Suspend"} User</DialogTitle>
+            <DialogTitle>{user.isSuspend ? "Unsuspend" : "Suspend"} User</DialogTitle>
             <DialogDescription>
-              {user.status === "suspended"
+              {user.isSuspend
                 ? `Are you sure you want to unsuspend ${user.name}? They will regain access to their account.`
                 : `Are you sure you want to suspend ${user.name}? They will lose access to their account.`}
             </DialogDescription>
@@ -80,9 +119,27 @@ const UserActionModals =({ user, actionType, onClose }: UserActionModalsProps) =
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button variant={user.status === "suspended" ? "default" : "destructive"} onClick={handleSuspend}>
-              {user.status === "suspended" ? "Unsuspend" : "Suspend"} User
+            <Button variant={user.isSuspend ? "default" : "destructive"} onClick={handleSuspend}>
+              {user.isSuspend ? "Unsuspend" : "Suspend"} User
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Force Logout Modal */}
+      <Dialog open={actionType === "force-logout"} onOpenChange={onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Force Logout</DialogTitle>
+            <DialogDescription>
+              This will send a password reset email to {user.email} and force logout from all devices.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleResetPassword}>Force Logout</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -105,13 +162,24 @@ const UserActionModals =({ user, actionType, onClose }: UserActionModalsProps) =
         </DialogContent>
       </Dialog>
 
+       {/* Subscription Management Modal */}
+      <Dialog open={actionType === "view"} onOpenChange={onClose}>
+        <DialogContent className="max-w-[1000px] h-[calc(100vh-100px)] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>User Details</DialogTitle>
+          </DialogHeader>
+          <UserDetail onBack={onClose} user={data?.data}/>
+        </DialogContent>
+      </Dialog>
+
+      
       {/* Subscription Management Modal */}
       <Dialog open={actionType === "subscription"} onOpenChange={onClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Manage Subscription</DialogTitle>
             <DialogDescription>
-              Change the subscription plan for {user.name}. Current plan: {user.subscription}
+              Change the subscription plan for {user.name}. Current plan: {user.subscriptionPlan}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

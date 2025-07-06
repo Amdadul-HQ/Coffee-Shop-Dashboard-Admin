@@ -4,28 +4,43 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { Separator } from "../ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
-
+interface User {
+  id: string
+  name: string
+  email: string
+  subscriptionPlan: "free" | "paid"
+  createdAt: string
+  lastActivity: string
+  isSuspend: boolean
+  ratings: number
+  notes: number
+  favorites: number
+  subscriptionStart:string
+  subscriptionEnd:string
+  totalSpent:string
+}
 interface UserDetailProps {
-  userId: string
+  user: User
   onBack: () => void
 }
 
-const UserDetail = ({ userId, onBack }: UserDetailProps) => {
-  // Mock user data
+const UserDetail = ({ onBack }: UserDetailProps) => {
+  
+
   const user = {
-    id: userId,
+    id: "1",
     name: "John Doe",
-    email: "john@example.com",
-    subscription: "paid",
-    signupDate: "2024-01-15",
-    lastActivity: "2024-01-20",
-    status: "active",
-    ratings: 45,
-    notes: 23,
-    favorites: 67,
-    totalSpent: "$299.99",
-    subscriptionStart: "2024-01-15",
-    subscriptionEnd: "2025-01-15",
+    email: "john.doe@example.com",
+    subscriptionPlan: "paid",
+    createdAt: "2024-01-01T10:00:00Z",
+    lastActivity: "2024-07-05T14:30:00Z",
+    isSuspend: false,
+    ratings: 25,
+    notes: 12,
+    favorites: 8,
+    subscriptionStart: "2024-01-01T00:00:00Z",
+    subscriptionEnd: "2025-01-01T00:00:00Z",
+    totalSpent: "99.99"
   }
 
   const recentActivity = [
@@ -35,14 +50,10 @@ const UserDetail = ({ userId, onBack }: UserDetailProps) => {
     { action: "Updated profile", item: "Profile Settings", date: "2024-01-17" },
   ]
 
-  const getStatusBadge = (status: string) => {
-    const variants = {
-      active: "default",
-      suspended: "secondary",
-      banned: "destructive",
-    } as const
+  const getStatusBadge = (status:boolean) => {
+  
 
-    return <Badge variant={variants[status as keyof typeof variants]}>{status}</Badge>
+    return <Badge variant={status ? "default" : "secondary"}>{status ? "Suspended" : "Active"}</Badge>
   }
 
   const getSubscriptionBadge = (subscription: string) => {
@@ -133,11 +144,11 @@ const UserDetail = ({ userId, onBack }: UserDetailProps) => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Status</span>
-              {getStatusBadge(user.status)}
+              {getStatusBadge(user.isSuspend)}
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Subscription</span>
-              {getSubscriptionBadge(user.subscription)}
+              {getSubscriptionBadge(user.subscriptionPlan)}
             </div>
             <Separator />
             <div className="flex items-center gap-2">
@@ -146,7 +157,7 @@ const UserDetail = ({ userId, onBack }: UserDetailProps) => {
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">Joined {user.signupDate}</span>
+              <span className="text-sm">Joined {user.createdAt}</span>
             </div>
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-muted-foreground" />

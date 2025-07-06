@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Search, MoreHorizontal, Eye, Ban, RotateCcw, CreditCard } from "lucide-react"
+import { Search, MoreHorizontal, Eye, Ban, RotateCcw, CreditCard, LogOut } from "lucide-react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
@@ -8,28 +8,75 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Badge } from "../ui/badge"
 import UserActionModals from "./user-action-modals"
-
+import UserDetail from "./user-detail"
 interface User {
   id: string
   name: string
   email: string
-  subscription: "free" | "paid"
-  signupDate: string
+  subscriptionPlan: "free" | "paid"
+  createdAt: string
   lastActivity: string
-  status: "active" | "suspended" | "banned"
+  isSuspend: boolean
   ratings: number
   notes: number
   favorites: number
 }
 
 
+type TActionType = "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
 
 const UserManagement=() => {
+  const [activeView, setActiveView] = useState<"users" | "paywall" | "user-detail">("users")
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+
+  const handleBackToUsers = () => {
+    setActiveView("users")
+    setSelectedUserId(null)
+  }
   const [searchTerm, setSearchTerm] = useState("")
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>("all")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [actionType, setActionType] = useState<"suspend" | "reset" | "subscription" | null>(null)
+  const [actionType, setActionType] = useState<TActionType>(null)
+  //  const {
+  //   data: allUsersData,
+  //   isFetching: isFetchingUsers,
+  //   error: usersError,
+  // } = useGetAllUserQuery(undefined);
+
+  // // Call second query
+  // const {
+  //   data: analyticsData,
+  //   isFetching: isFetchingAnalytics,
+  //   error: analyticsError,
+  // } = useGetUsersAnalyticsQuery(undefined);
+
+  // if (isFetchingUsers || isFetchingAnalytics) {
+  //   return <div>Loading...</div>;
+  // }
+
+  // if (usersError || analyticsError) {
+  //   return <div>Error loading data.</div>;
+  // }
+
+  // const users = allUsersData?.data
+  // const analytics = analyticsData?.data
+// console.log(users)
+
+
+// return
+// const users = data?.data
+
+// return
+
+const analytics = {
+  totalUsers:2,
+  paidUsers:[],
+  activeUsers:2,
+  suspendedUsers:[]
+
+
+}
 
   // Mock data
   const users: User[] = [
@@ -37,10 +84,10 @@ const UserManagement=() => {
       id: "1",
       name: "John Doe",
       email: "john@example.com",
-      subscription: "paid",
-      signupDate: "2024-01-15",
+      subscriptionPlan: "paid",
+      createdAt: "2024-01-15",
       lastActivity: "2024-01-20",
-      status: "active",
+      isSuspend: false,
       ratings: 45,
       notes: 23,
       favorites: 67,
@@ -49,10 +96,10 @@ const UserManagement=() => {
       id: "2",
       name: "Jane Smith",
       email: "jane@example.com",
-      subscription: "free",
-      signupDate: "2024-01-10",
+      subscriptionPlan: "free",
+      createdAt: "2024-01-10",
       lastActivity: "2024-01-19",
-      status: "active",
+      isSuspend: false,
       ratings: 12,
       notes: 8,
       favorites: 34,
@@ -61,39 +108,43 @@ const UserManagement=() => {
       id: "3",
       name: "Bob Johnson",
       email: "bob@example.com",
-      subscription: "paid",
-      signupDate: "2023-12-20",
+      subscriptionPlan: "paid",
+      createdAt: "2023-12-20",
       lastActivity: "2024-01-18",
-      status: "suspended",
+      isSuspend:true,
       ratings: 78,
       notes: 45,
       favorites: 123,
     },
   ]
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesSubscription = subscriptionFilter === "all" || user.subscription === subscriptionFilter
-    const matchesStatus = statusFilter === "all" || user.status === statusFilter
+  // const filteredUsers = users.filter((user) => {
+  //   const matchesSearch =
+  //     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesSubscription = subscriptionFilter === "all" || user.subscription === subscriptionFilter
+  //   const matchesStatus = statusFilter === "all" || user.status === statusFilter
 
-    return matchesSearch && matchesSubscription && matchesStatus
-  })
+  //   return matchesSearch && matchesSubscription && matchesStatus
+  // })
 
-  const handleAction = (user: User, action: "suspend" | "reset" | "subscription") => {
+  const handleAction = (user: User, action:TActionType) => {
     setSelectedUser(user)
+    if(!(user.id)){
+      window.alert("User Select")
+    }
+    if(action === "suspend" && user.id){
+      console.log(user.id)
+      // const {data,isFetching,isError} = useUserSuspendQuery({id:user.id})
+      // console.log(data,isError)
+    }
+
     setActionType(action)
   }
 
-  const getStatusBadge = (status: string) => {
-    const variants = {
-      active: "default",
-      suspended: "secondary",
-      banned: "destructive",
-    } as const
+  const getStatusBadge = (status: boolean) => {
 
-    return <Badge variant={variants[status as keyof typeof variants]}>{status}</Badge>
+    return <Badge variant={status ? "secondary" : "default"}>{status ? "Suspended" : "Active"}</Badge>
   }
 
   const getSubscriptionBadge = (subscription: string) => {
@@ -113,7 +164,7 @@ const UserManagement=() => {
             <CardTitle className="text-sm font-medium text-yellow-400">Total Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="md:text-2xl font-bold">1,234</div>
+            <div className="md:text-2xl font-bold">{analytics?.totalUsers}</div>
           </CardContent>
         </Card>
         <Card>
@@ -121,15 +172,15 @@ const UserManagement=() => {
             <CardTitle className="text-sm font-medium text-yellow-400">Paid Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="md:text-2xl font-bold">456</div>
+            <div className="md:text-2xl font-bold">{analytics?.paidUsers?.length}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-yellow-400">Active Today</CardTitle>
+            <CardTitle className="text-sm font-medium text-yellow-400">Active Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="md:text-2xl font-bold">89</div>
+            <div className="md:text-2xl font-bold">{analytics?.activeUsers}</div>
           </CardContent>
         </Card>
         <Card>
@@ -137,7 +188,7 @@ const UserManagement=() => {
             <CardTitle className="text-sm text-yellow-400 font-medium">Suspended</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="md:text-2xl font-bold">12</div>
+            <div className="md:text-2xl font-bold">{analytics?.suspendedUsers?.length}</div>
           </CardContent>
         </Card>
       </div>
@@ -197,7 +248,7 @@ const UserManagement=() => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
+                {users.map((user:User) => (
                   <TableRow key={user.id}>
                     <TableCell>
                       <div>
@@ -205,9 +256,9 @@ const UserManagement=() => {
                         <div className="text-sm text-muted-foreground">{user.email}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{getSubscriptionBadge(user.subscription)}</TableCell>
-                    <TableCell>{getStatusBadge(user.status)}</TableCell>
-                    <TableCell>{user.signupDate}</TableCell>
+                    <TableCell>{getSubscriptionBadge(user.subscriptionPlan)}</TableCell>
+                    <TableCell>{getStatusBadge(user.isSuspend)}</TableCell>
+                    <TableCell>{new Date(user.createdAt).toDateString()}</TableCell>
                     <TableCell>{user.lastActivity}</TableCell>
                     <TableCell className="hidden md:table-cell">
                       <div className="text-sm">
@@ -224,17 +275,22 @@ const UserManagement=() => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAction(user, "view")}>
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleAction(user, "suspend")}>
                             <Ban className="h-4 w-4 mr-2" />
-                            {user.status === "suspended" ? "Unsuspend" : "Suspend"}
+                            {user.isSuspend
+ === true ? "Unsuspend" : "Suspend"}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleAction(user, "reset")}>
                             <RotateCcw className="h-4 w-4 mr-2" />
                             Reset Password
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAction(user, "force-logout")}>
+                            <LogOut className="h-4 w-4 mr-2" />
+                            Force Logout
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleAction(user, "subscription")}>
                             <CreditCard className="h-4 w-4 mr-2" />
@@ -259,6 +315,11 @@ const UserManagement=() => {
           setActionType(null)
         }}
       />
+
+
+      {activeView === "user-detail" && selectedUserId && (
+            <UserDetail userId={selectedUserId} onBack={handleBackToUsers} />
+        )}
     </div>
   )
 }
