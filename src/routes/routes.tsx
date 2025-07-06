@@ -7,6 +7,8 @@ import CoffeeShopManagement from "../components/dashboard/coffee-shop-management
 import AccessDenied from "../pages/error/ForbiddenAccess";
 import ErrorPage from "../pages/error/errorPage";
 import AnalyticsDashboard from "../components/dashboard/analytics-and-tracking";
+import ProtectedRoute from "./private/privateRoutes";
+import AccoutSuspend from "../pages/error/accoutSuspended";
 
 const router = createBrowserRouter([
     {
@@ -16,7 +18,11 @@ const router = createBrowserRouter([
     },
     {
         path:'/dashboard/admin',
-        element:<DashboardLayout/>,
+        element:(
+            <ProtectedRoute>
+                    <DashboardLayout/>
+            </ProtectedRoute>
+        ),
         errorElement:<ErrorPage/>,
         children:[
         {
@@ -41,6 +47,10 @@ const router = createBrowserRouter([
 
         path:'/access-denied',
         element:<AccessDenied/>
+    },
+    {
+        path:'/account-suspended',
+        element:<AccoutSuspend/>
     }
 ])
 

@@ -5,6 +5,7 @@ export type TUser = {
     email:string,
     name:string,
     isAdmin:boolean,
+    isSuspend:boolean,
     iat:number,
     exp:number
 }
