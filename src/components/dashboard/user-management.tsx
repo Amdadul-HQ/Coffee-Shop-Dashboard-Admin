@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Badge } from "../ui/badge"
 import UserActionModals from "./user-action-modals"
 import UserDetail from "./user-detail"
+import { useGetAllUserQuery, useGetUsersAnalyticsQuery } from "../../redux/features/admin/adminManagementApi"
+import { useDebounce } from "../../function/useDebounce"
 interface User {
   id: string
   name: string
@@ -34,99 +36,42 @@ const UserManagement=() => {
     setSelectedUserId(null)
   }
   const [searchTerm, setSearchTerm] = useState("")
-  const [subscriptionFilter, setSubscriptionFilter] = useState<string>("all")
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const [subscriptionFilter, setSubscriptionFilter] = useState<string>("free")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [actionType, setActionType] = useState<TActionType>(null)
-  //  const {
-  //   data: allUsersData,
-  //   isFetching: isFetchingUsers,
-  //   error: usersError,
-  // } = useGetAllUserQuery(undefined);
+   const {
+  data: allUsersData,
+  isFetching: isFetchingUsers,
+  error: usersError,
+} = useGetAllUserQuery([
+  { name: "search", value: debouncedSearchTerm },
+  { name: "subscriptionPlan", value: subscriptionFilter },
+  { name: "isSuspend", value: statusFilter },
+  { name: "limit", value: "10" },
+  { name: "offset", value: "0" },
+]);
 
-  // // Call second query
-  // const {
-  //   data: analyticsData,
-  //   isFetching: isFetchingAnalytics,
-  //   error: analyticsError,
-  // } = useGetUsersAnalyticsQuery(undefined);
+  // Call second query
+  const {
+    data: analyticsData,
+    isFetching: isFetchingAnalytics,
+    error: analyticsError,
+  } = useGetUsersAnalyticsQuery(undefined);
 
   // if (isFetchingUsers || isFetchingAnalytics) {
   //   return <div>Loading...</div>;
   // }
 
-  // if (usersError || analyticsError) {
-  //   return <div>Error loading data.</div>;
-  // }
+  if (usersError || analyticsError) {
+    return <div>Error loading data.</div>;
+  }
 
-  // const users = allUsersData?.data
-  // const analytics = analyticsData?.data
-// console.log(users)
+  const users = allUsersData?.data
+  const analytics = analyticsData?.data
 
-
-// return
-// const users = data?.data
-
-// return
-
-const analytics = {
-  totalUsers:2,
-  paidUsers:[],
-  activeUsers:2,
-  suspendedUsers:[]
-
-
-}
-
-  // Mock data
-  const users: User[] = [
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      subscriptionPlan: "paid",
-      createdAt: "2024-01-15",
-      lastActivity: "2024-01-20",
-      isSuspend: false,
-      ratings: 45,
-      notes: 23,
-      favorites: 67,
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      subscriptionPlan: "free",
-      createdAt: "2024-01-10",
-      lastActivity: "2024-01-19",
-      isSuspend: false,
-      ratings: 12,
-      notes: 8,
-      favorites: 34,
-    },
-    {
-      id: "3",
-      name: "Bob Johnson",
-      email: "bob@example.com",
-      subscriptionPlan: "paid",
-      createdAt: "2023-12-20",
-      lastActivity: "2024-01-18",
-      isSuspend:true,
-      ratings: 78,
-      notes: 45,
-      favorites: 123,
-    },
-  ]
-
-  // const filteredUsers = users.filter((user) => {
-  //   const matchesSearch =
-  //     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  //   const matchesSubscription = subscriptionFilter === "all" || user.subscription === subscriptionFilter
-  //   const matchesStatus = statusFilter === "all" || user.status === statusFilter
-
-  //   return matchesSearch && matchesSubscription && matchesStatus
-  // })
 
   const handleAction = (user: User, action:TActionType) => {
     setSelectedUser(user)
@@ -213,7 +158,7 @@ const analytics = {
               <SelectContent>
                 <SelectItem value="all">All Subscriptions</SelectItem>
                 <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
+                <SelectItem value="pro">Pro</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -242,14 +187,20 @@ const analytics = {
                   <TableHead>Subscription</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Signup Date</TableHead>
-                  <TableHead>Last Activity</TableHead>
-                  <TableHead className="hidden md:table-cell">Activity</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user:User) => (
-                  <TableRow key={user.id}>
+                {
+                  isFetchingUsers ? (
+    <TableRow>
+      <TableCell colSpan={5} className="text-center">
+        Loading users...
+      </TableCell>
+    </TableRow>
+  ) : (
+    users.map((user: User) => (
+      <TableRow key={user.id}>
                     <TableCell>
                       <div>
                         <div className="font-medium">{user.name}</div>
@@ -259,15 +210,7 @@ const analytics = {
                     <TableCell>{getSubscriptionBadge(user.subscriptionPlan)}</TableCell>
                     <TableCell>{getStatusBadge(user.isSuspend)}</TableCell>
                     <TableCell>{new Date(user.createdAt).toDateString()}</TableCell>
-                    <TableCell>{user.lastActivity}</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      <div className="text-sm">
-                        <div>Ratings: {user.ratings}</div>
-                        <div>Notes: {user.notes}</div>
-                        <div>Favorites: {user.favorites}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
@@ -300,7 +243,8 @@ const analytics = {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
+    ))
+  )}
               </TableBody>
             </Table>
           </div>
