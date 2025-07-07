@@ -33,6 +33,7 @@ import {
   Clock,
   Star,
 } from "lucide-react"
+import { useAdminCafeApproveCafeMutation, useAdminCafeMergeCafeMutation, useAdminGetAllCafeQuery } from "../../redux/features/admin/adminCoffeeManagement"
 
 // Mock data
 const coffeeShops = [
@@ -129,9 +130,13 @@ const duplicateGroups = [
 ]
 
 const CoffeeShopManagement=() => {
+  const {data,isFetching} = useAdminGetAllCafeQuery(undefined)
+  console.log(data?.data)
   const [selectedShops, setSelectedShops] = useState<number[]>([])
   const [, setEditingShop] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState("")
+  const [adminCafeApproveCafe,{isLoading}] = useAdminCafeApproveCafeMutation()
+  const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
 
   const handleSelectShop = (shopId: number) => {
     setSelectedShops((prev) => (prev.includes(shopId) ? prev.filter((id) => id !== shopId) : [...prev, shopId]))
