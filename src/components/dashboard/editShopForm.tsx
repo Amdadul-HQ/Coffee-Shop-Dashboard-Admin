@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { DialogFooter } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { toast } from "sonner";
 
 const EditShopForm = ({ shop, setEditingShop }: { shop: any; setEditingShop: any }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -21,7 +22,10 @@ const EditShopForm = ({ shop, setEditingShop }: { shop: any; setEditingShop: any
 
     try {
       const res = await adminUpdateCafe({ id: shop.id, data:{...values} }).unwrap()
-      setEditingShop(false)
+      if(res.success){
+        toast.success("Coffee Shope Details Updated")
+        setEditingShop(false)
+      }
     //   onClose(null)
     } catch (err) {
       console.error("Failed to update shop:", err)

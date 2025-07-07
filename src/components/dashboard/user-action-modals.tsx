@@ -13,6 +13,7 @@ import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
 import { useForceLogoutMutation, useGetUserDetailsQuery, useResetPasswordMutation, useUserSuspendMutation, useUserUnSuspendMutation } from "../../redux/features/admin/adminManagementApi"
 import UserDetail from "./user-detail"
+import { toast } from "sonner"
 
 interface User {
   id: string;
@@ -51,11 +52,17 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
     if(user?.id && actionType === "suspend"){
       const res = await suspendUser({ id: user.id }).unwrap();
       console.log("Suspended user:", res);
+      if(res?.success){
+        toast.success(`${user.name} is Suspended Successfully`)
+      }
     }
 
     if(user?.id && actionType === "Unsuspend") {
       const res = await unSuspenndUser({ id: user.id }).unwrap();
       console.log("UnSuspended user:", res);
+      if(res?.success){
+        toast.success(`${user.name} is UnSuspended Successfully`)
+      }
     }
 
     // console.log(`${user?.isSuspend === "suspended" ? "Unsuspending" : "Suspending"} user:`, user?.id, "Reason:", reason)
@@ -68,13 +75,18 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
     // force logout
     if(user?.id && actionType === "force-logout"){
       const res = await forceLogout({id:user.id})
-      console.log("Force Logout",res)
+    if(res?.data?.success){
+      toast.success(`${user.name}Force Logout Successfull`)
+      onClose()
+    }
     }
     
     // Handle password reset logic
     if(user?.id && actionType === "reset"){
       const res = await resetPassword({id:user.id})
-      console.log("Resetting password for user:",res)
+      if(res?.data?.success){
+      toast.success(`${user.name} Password Reset Successfull`)
+    }
     onClose()
     }
   }

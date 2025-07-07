@@ -36,6 +36,7 @@ import {
 import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminFlaggedContentRemoveMutation, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminPendingCafeRejectMutation, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
 import EditShopForm from "./editShopForm"
 import { useDebounce } from "../../function/useDebounce"
+import { toast } from "sonner"
 
 // Mock data
 // const coffeeShops = [
@@ -155,22 +156,28 @@ const [adminCafeApproveCafe,{isLoading:loadingApprovedCafe}] = useAdminCafeAppro
 const {data:duplicateData,isFetching:loadingDuplicate} = useAdminDuplicateCafeQuery(undefined)
 const [adminFlaggedContentRemove,{isLoading:loadingFlaggedContentRemove}] = useAdminFlaggedContentRemoveMutation()
 const duplicate = duplicateData?.data
-console.log(duplicate)
 const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCafeRejectMutation()
 // console.log(duplicate)
   // const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
   // const [adminUpdateCafe,{isLoading:loadingCafeUpdate}] = useAdminUpdateCafeMutation();
-  const handleSelectShop = (shopId: number) => {
-    setSelectedShops((prev) => (prev.includes(shopId) ? prev.filter((id) => id !== shopId) : [...prev, shopId]))
+  const handleSelectShop = (shopId: string) => {
+    // setSelectedShops((prev) => (prev.includes(shopId) ? prev.filter((id) => id !== shopId) : [...prev, shopId]))
   }
 
 
-  const handleApproveShop = (shopId: number) => {
-    console.log(`Approving shop ${shopId}`)
+  const handleApproveShop =async (shopId: string) => {
+    const res = await adminCafeApproveCafe({id:shopId})
+    if(res?.data?.success){
+      toast.success("Coffee Shope Approved")
+    }
   }
 
-  const handleRejectShop = (shopId: number) => {
-    console.log(`Rejecting shop ${shopId}`)
+  const handleRejectShop = async (shopId: string) => {
+    // console.log(`Rejecting shop ${shopId}`)
+    const res = await adminCafePendingReject({id:shopId})
+    if(res?.data?.success){
+      toast.success("Coffee Shope Rejected")
+    }
   }
 
   const handleMergeDuplicates = (groupId: object, primaryId: number) => {
@@ -183,6 +190,26 @@ const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCa
 
   const handleBulkImport = () => {
     console.log("Opening import dialog")
+  }
+  const handleDeleteCoffeeShop = async(shopId:string) => {
+    const res = await deleteCafe({id:shopId})
+    if(res?.data?.success){
+      toast.success("Coffee Shope Deleted Successfully")
+    }
+  }
+
+  const handleFlaggedResolve = async(shopId:string) => {
+    const res = await flaggedContentResolve({id:shopId})
+    if(res?.data?.success){
+      toast.success("Flaggedd Content Resolved")
+    }
+  }
+
+  const handleFlaggedRemove = async(shopId:string) => {
+    const res = await adminFlaggedContentRemove({id:shopId})
+    if(res?.data?.success){
+      toast.success("Flagged Content Removed")
+    }
   }
 
   return (
@@ -332,7 +359,7 @@ const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCa
 
                             </DialogContent>
                           </Dialog>
-                          <Button onClick={()=>deleteCafe({id:shop.id})} variant="ghost" size="sm">
+                          <Button onClick={()=>handleDeleteCoffeeShop(shop.id)} variant="ghost" size="sm">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -371,11 +398,11 @@ const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCa
                         <TableCell>{shop?.createdAt}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <Button size="sm" onClick={() => adminCafeApproveCafe({id:shop?.id})}>
+                            <Button size="sm" onClick={() => handleApproveShop(shop.id)}>
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Approve
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => adminCafePendingReject({id:shop.id})}>
+                            <Button variant="outline" size="sm" onClick={() => handleRejectShop(shop.id)}>
                               <XCircle className="h-4 w-4 mr-1" />
                               Reject
                             </Button>
@@ -421,11 +448,11 @@ const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCa
                         <TableCell>{new Date(shop.createdAt).toDateString()}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <Button onClick={() => {flaggedContentResolve({id:shop.id})}} size="sm" variant="outline">
+                            <Button onClick={() => handleFlaggedResolve(shop.id)} size="sm" variant="outline">
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Resolve
                             </Button>
-                            <Button onClick={()=>{adminFlaggedContentRemove({id:shop.id})}} size="sm" variant="destructive">
+                            <Button onClick={()=>handleFlaggedRemove(shop.id)} size="sm" variant="destructive">
                               <Trash2 className="h-4 w-4 mr-1" />
                               Remove
                             </Button>
