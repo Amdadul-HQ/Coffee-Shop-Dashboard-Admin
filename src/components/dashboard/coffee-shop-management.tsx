@@ -379,7 +379,7 @@ const handleMergeDuplicates = async (groups: any[], primaryId: number) => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={shop?.isApproved ? "default" : "secondary"}>{shop.isApproved ? "Active" : "Pending"}</Badge>
+                        <Badge className="capitalize" variant={shop?.status ? "default" : "secondary"}>{shop.status}</Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
