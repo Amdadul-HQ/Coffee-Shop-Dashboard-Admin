@@ -302,7 +302,7 @@ const CoffeeShopManagement=() => {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          <Dialog>
+                          <Dialog open={editingShop}>
                             <DialogTrigger asChild>
                               <Button variant="ghost" size="sm" onClick={() => setEditingShop(shop)}>
                                 <Edit className="h-4 w-4" />
@@ -314,7 +314,7 @@ const CoffeeShopManagement=() => {
         <DialogDescription>Make changes to the coffee shop details here.</DialogDescription>
       </DialogHeader>
 
-      <EditShopForm shop={editingShop} onClose={() => setEditingShop(null)} />
+      <EditShopForm shop={editingShop} setEditingShop={setEditingShop} />
 
                             </DialogContent>
                           </Dialog>

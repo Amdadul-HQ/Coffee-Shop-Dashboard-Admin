@@ -16,6 +16,7 @@ const adminManagementApi = baseApi.injectEndpoints({
           params: params,
         };
       },
+      providesTags: ["users"],
     }),
     getUsersAnalytics:builder.query({
         query:() => {

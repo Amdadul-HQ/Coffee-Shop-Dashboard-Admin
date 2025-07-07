@@ -5,7 +5,7 @@ import { DialogFooter } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-const EditShopForm = ({ shop, onClose }: { shop: any; onClose: () => void }) => {
+const EditShopForm = ({ shop, setEditingShop }: { shop: any; setEditingShop: any }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       name: shop.name || "",
@@ -18,9 +18,11 @@ const EditShopForm = ({ shop, onClose }: { shop: any; onClose: () => void }) => 
   const [adminUpdateCafe, { isLoading }] = useAdminUpdateCafeMutation()
 
   const onSubmit = async (values: any) => {
+
     try {
-      await adminUpdateCafe({ id: shop.id, ...values }).unwrap()
-      onClose()
+      const res = await adminUpdateCafe({ id: shop.id, data:{...values} }).unwrap()
+      setEditingShop(false)
+    //   onClose(null)
     } catch (err) {
       console.error("Failed to update shop:", err)
     }

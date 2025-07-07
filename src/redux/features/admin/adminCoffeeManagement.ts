@@ -9,7 +9,8 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                     method: "PATCH",
                     body: data,
                     }
-                }
+                },
+                invalidatesTags:["coffeeShop"]
             }),
             adminCafeApproveCafe: builder.mutation({
                 query:({id}) => {
@@ -41,12 +42,7 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                 params: params,
                 };
             },
-                // query:() => {
-                //     return {
-                //         url:'/admin/cafe/get-admin-cafes',
-                //         method:"GET"
-                //     }
-                // }
+            providesTags: ["coffeeShop"],
             }),
             adminImportCafes: builder.mutation({
                 query:({data}) => {
