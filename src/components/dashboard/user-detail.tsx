@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { Separator } from "../ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
+import { useGetUserDetailsQuery } from "../../redux/features/admin/adminManagementApi"
 interface User {
   id: string
   name: string
@@ -20,28 +21,36 @@ interface User {
   totalSpent:string
 }
 interface UserDetailProps {
-  user: User
+  userId: string
   onBack: () => void
+  setActionType:any
 }
 
-const UserDetail = ({ onBack }: UserDetailProps) => {
-  
+const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
+  console.log(userId)
+    const {
+     data,
+     isFetching: isFetchingUser,
+     error: userError,
+   } = useGetUserDetailsQuery({id:userId});
 
-  const user = {
-    id: "1",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    subscriptionPlan: "paid",
-    createdAt: "2024-01-01T10:00:00Z",
-    lastActivity: "2024-07-05T14:30:00Z",
-    isSuspend: false,
-    ratings: 25,
-    notes: 12,
-    favorites: 8,
-    subscriptionStart: "2024-01-01T00:00:00Z",
-    subscriptionEnd: "2025-01-01T00:00:00Z",
-    totalSpent: "99.99"
-  }
+   const user = data?.data
+   console.log(data)
+  // const user = {
+  //   id: "1",
+  //   name: "John Doe",
+  //   email: "john.doe@example.com",
+  //   subscriptionPlan: "paid",
+  //   createdAt: "2024-01-01T10:00:00Z",
+  //   lastActivity: "2024-07-05T14:30:00Z",
+  //   isSuspend: false,
+  //   ratings: 25,
+  //   notes: 12,
+  //   favorites: 8,
+  //   subscriptionStart: "2024-01-01T00:00:00Z",
+  //   subscriptionEnd: "2025-01-01T00:00:00Z",
+  //   totalSpent: "99.99"
+  // }
 
   const recentActivity = [
     { action: "Created note", item: "Meeting Notes", date: "2024-01-20" },
@@ -71,15 +80,20 @@ const UserDetail = ({ onBack }: UserDetailProps) => {
 
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">{user.name}</h1>
-          <p className="text-muted-foreground">{user.email}</p>
+          <h1 className="text-3xl font-bold">{user?.name}</h1>
+          <p className="text-muted-foreground">{user?.email}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm">
+          {
+            user?.isSuspend ? <Button onClick={()=>{setActionType("Unsuspend")}} variant="outline" size="sm">
+            <Ban className="h-4 w-4 mr-2" />
+            UnSuspend User
+          </Button> : <Button onClick={()=>{setActionType("suspend")}} variant="outline" size="sm">
             <Ban className="h-4 w-4 mr-2" />
             Suspend User
           </Button>
-          <Button variant="outline" size="sm">
+          }
+          <Button onClick={() => setActionType("reset")} variant="outline" size="sm">
             <RotateCcw className="h-4 w-4 mr-2" />
             Reset Password
           </Button>
@@ -100,7 +114,7 @@ const UserDetail = ({ onBack }: UserDetailProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{user.ratings}</div>
+            <div className="text-2xl font-bold">{user?.ratings}</div>
           </CardContent>
         </Card>
         <Card>
@@ -111,7 +125,7 @@ const UserDetail = ({ onBack }: UserDetailProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{user.notes}</div>
+            <div className="text-2xl font-bold">{user?.notes}</div>
           </CardContent>
         </Card>
         <Card>
@@ -122,7 +136,7 @@ const UserDetail = ({ onBack }: UserDetailProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{user.favorites}</div>
+            <div className="text-2xl font-bold">{user?.favorites}</div>
           </CardContent>
         </Card>
         <Card>
@@ -130,12 +144,12 @@ const UserDetail = ({ onBack }: UserDetailProps) => {
             <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{user.totalSpent}</div>
+            <div className="text-2xl font-bold">{user?.totalSpent}</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* User Details */}
+      {/* User? Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -144,24 +158,24 @@ const UserDetail = ({ onBack }: UserDetailProps) => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Status</span>
-              {getStatusBadge(user.isSuspend)}
+              {getStatusBadge(user?.isSuspend)}
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Subscription</span>
-              {getSubscriptionBadge(user.subscriptionPlan)}
+              {getSubscriptionBadge(user?.subscriptionPlan)}
             </div>
             <Separator />
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">{user.email}</span>
+              <span className="text-sm">{user?.email}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">Joined {user.createdAt}</span>
+              <span className="text-sm">Joined {new Date(user?.createdAt).toDateString()}</span>
             </div>
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">Last active {user.lastActivity}</span>
+              <span className="text-sm">Last active {user?.lastActivity}</span>
             </div>
           </CardContent>
         </Card>
@@ -177,15 +191,15 @@ const UserDetail = ({ onBack }: UserDetailProps) => {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Started</span>
-              <span className="text-sm">{user.subscriptionStart}</span>
+              <span className="text-sm">{new Date(user?.planStartedAt).toDateString()}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Expires</span>
-              <span className="text-sm">{user.subscriptionEnd}</span>
+              <span className="text-sm">{user?.subscriptionEnd}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Total Spent</span>
-              <span className="text-sm font-bold">{user.totalSpent}</span>
+              <span className="text-sm font-bold">{user?.totalSpent}</span>
             </div>
           </CardContent>
         </Card>

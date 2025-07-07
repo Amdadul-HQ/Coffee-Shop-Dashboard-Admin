@@ -33,44 +33,46 @@ import {
   Clock,
   Star,
 } from "lucide-react"
-import { useAdminCafeApproveCafeMutation, useAdminCafeMergeCafeMutation, useAdminGetAllCafeQuery } from "../../redux/features/admin/adminCoffeeManagement"
+import { useAdminCafeApproveCafeMutation, useAdminCafeMergeCafeMutation, useAdminGetAllCafeQuery, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
+import EditShopForm from "./editShopForm"
+import { useDebounce } from "../../function/useDebounce"
 
 // Mock data
-const coffeeShops = [
-  {
-    id: 1,
-    name: "Blue Bottle Coffee",
-    address: "123 Main St, San Francisco, CA",
-    phone: "(555) 123-4567",
-    rating: 4.5,
-    status: "active",
-    submittedBy: "admin",
-    createdAt: "2024-01-15",
-    flagged: false,
-  },
-  {
-    id: 2,
-    name: "Stumptown Coffee",
-    address: "456 Oak Ave, Portland, OR",
-    phone: "(555) 234-5678",
-    rating: 4.3,
-    status: "active",
-    submittedBy: "user123",
-    createdAt: "2024-01-20",
-    flagged: false,
-  },
-  {
-    id: 3,
-    name: "Local Brew House",
-    address: "789 Pine St, Seattle, WA",
-    phone: "(555) 345-6789",
-    rating: 4.1,
-    status: "pending",
-    submittedBy: "user456",
-    createdAt: "2024-01-25",
-    flagged: false,
-  },
-]
+// const coffeeShops = [
+//   {
+//     id: 1,
+//     name: "Blue Bottle Coffee",
+//     address: "123 Main St, San Francisco, CA",
+//     phone: "(555) 123-4567",
+//     rating: 4.5,
+//     status: "active",
+//     submittedBy: "admin",
+//     createdAt: "2024-01-15",
+//     flagged: false,
+//   },
+//   {
+//     id: 2,
+//     name: "Stumptown Coffee",
+//     address: "456 Oak Ave, Portland, OR",
+//     phone: "(555) 234-5678",
+//     rating: 4.3,
+//     status: "active",
+//     submittedBy: "user123",
+//     createdAt: "2024-01-20",
+//     flagged: false,
+//   },
+//   {
+//     id: 3,
+//     name: "Local Brew House",
+//     address: "789 Pine St, Seattle, WA",
+//     phone: "(555) 345-6789",
+//     rating: 4.1,
+//     status: "pending",
+//     submittedBy: "user456",
+//     createdAt: "2024-01-25",
+//     flagged: false,
+//   },
+// ]
 
 const pendingShops = [
   {
@@ -130,14 +132,21 @@ const duplicateGroups = [
 ]
 
 const CoffeeShopManagement=() => {
-  const {data,isFetching} = useAdminGetAllCafeQuery(undefined)
-  console.log(data?.data)
-  const [selectedShops, setSelectedShops] = useState<number[]>([])
-  const [, setEditingShop] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState("")
-  const [adminCafeApproveCafe,{isLoading}] = useAdminCafeApproveCafeMutation()
-  const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
+  
+  const [selectedShops, setSelectedShops] = useState<number[]>([])
+  const [editingShop, setEditingShop] = useState<any>(null)
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const {data,isFetching} = useAdminGetAllCafeQuery([
+  { name: "search", value: debouncedSearchTerm },
+  { name: "limit", value: "10" },
+  { name: "offset", value: "0" },
+])
+  // const [adminCafeApproveCafe,{isLoading}] = useAdminCafeApproveCafeMutation()
+  const coffeeShops = data?.data
 
+  // const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
+  // const [adminUpdateCafe,{isLoading:loadingCafeUpdate}] = useAdminUpdateCafeMutation();
   const handleSelectShop = (shopId: number) => {
     setSelectedShops((prev) => (prev.includes(shopId) ? prev.filter((id) => id !== shopId) : [...prev, shopId]))
   }
@@ -180,7 +189,7 @@ const CoffeeShopManagement=() => {
               <Coffee className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{coffeeShops.length}</div>
+              <div className="text-2xl font-bold">{coffeeShops?.length}</div>
               <p className="text-xs text-muted-foreground">Active coffee shops</p>
             </CardContent>
           </Card>
@@ -265,7 +274,13 @@ const CoffeeShopManagement=() => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {coffeeShops.map((shop) => (
+                  {isFetching ? (
+    <TableRow>
+      <TableCell colSpan={5} className="text-center">
+        Loading users...
+      </TableCell>
+    </TableRow>
+  ) : (coffeeShops?.map((shop:any) => (
                     <TableRow key={shop.id}>
                       <TableCell>
                         <Checkbox
@@ -273,17 +288,17 @@ const CoffeeShopManagement=() => {
                           onCheckedChange={() => handleSelectShop(shop.id)}
                         />
                       </TableCell>
-                      <TableCell className="font-medium">{shop.name}</TableCell>
-                      <TableCell>{shop.address}</TableCell>
-                      <TableCell>{shop.phone}</TableCell>
+                      <TableCell className="font-medium">{shop?.name}</TableCell>
+                      <TableCell>{shop?.country}<br/>{shop?.state}, {shop?.city}</TableCell>
+                      <TableCell>{shop?.phone}</TableCell>
                       <TableCell>
                         <div className="flex items-center">
                           <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                          {shop.rating}
+                          {shop?.rating}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={shop.status === "active" ? "default" : "secondary"}>{shop.status}</Badge>
+                        <Badge variant={shop?.isApproved ? "default" : "secondary"}>{shop.isApproved ? "Active" : "Pending"}</Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
@@ -295,47 +310,12 @@ const CoffeeShopManagement=() => {
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                               <DialogHeader>
-                                <DialogTitle>Edit Coffee Shop</DialogTitle>
-                                <DialogDescription>Make changes to the coffee shop details here.</DialogDescription>
-                              </DialogHeader>
-                              <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                  <Label htmlFor="name" className="text-right">
-                                    Name
-                                  </Label>
-                                  <Input id="name" defaultValue={shop.name} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                  <Label htmlFor="address" className="text-right">
-                                    Address
-                                  </Label>
-                                  <Input id="address" defaultValue={shop.address} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                  <Label htmlFor="phone" className="text-right">
-                                    Phone
-                                  </Label>
-                                  <Input id="phone" defaultValue={shop.phone} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                  <Label htmlFor="status" className="text-right">
-                                    Status
-                                  </Label>
-                                  <Select defaultValue={shop.status}>
-                                    <SelectTrigger className="col-span-3">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="active">Active</SelectItem>
-                                      <SelectItem value="inactive">Inactive</SelectItem>
-                                      <SelectItem value="pending">Pending</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              </div>
-                              <DialogFooter>
-                                <Button type="submit">Save changes</Button>
-                              </DialogFooter>
+        <DialogTitle>Edit Coffee Shop</DialogTitle>
+        <DialogDescription>Make changes to the coffee shop details here.</DialogDescription>
+      </DialogHeader>
+
+      <EditShopForm shop={editingShop} onClose={() => setEditingShop(null)} />
+
                             </DialogContent>
                           </Dialog>
                           <Button variant="ghost" size="sm">
@@ -344,7 +324,7 @@ const CoffeeShopManagement=() => {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )))}
                 </TableBody>
               </Table>
             </Card>
@@ -372,9 +352,9 @@ const CoffeeShopManagement=() => {
                     {pendingShops.map((shop) => (
                       <TableRow key={shop.id}>
                         <TableCell className="font-medium">{shop.name}</TableCell>
-                        <TableCell>{shop.address}</TableCell>
-                        <TableCell>{shop.submittedBy}</TableCell>
-                        <TableCell>{shop.createdAt}</TableCell>
+                        <TableCell>{shop?.address}</TableCell>
+                        <TableCell>{shop?.submittedBy}</TableCell>
+                        <TableCell>{shop?.createdAt}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Button size="sm" onClick={() => handleApproveShop(shop.id)}>

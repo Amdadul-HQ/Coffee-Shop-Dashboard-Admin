@@ -20,7 +20,7 @@ const MobileNavbar =()=> {
         const isActive = index === activeIndex
 
         return (
-        <Link to={`/dashboard/admin/${tab.path}`}>
+        <Link key={index} to={`/dashboard/admin/${tab.path}`}>
           <button
             key={tab.name}
             onClick={() => setActiveIndex(index)}

@@ -28,12 +28,25 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                 }
             }),
             adminGetAllCafe: builder.query({
-                query:() => {
-                    return {
-                        url:'/admin/cafe/get-admin-cafes',
-                        method:"GET"
-                    }
+                query: (args) => {
+                const params = new URLSearchParams();
+                if (args) {
+                args.forEach((item: any) => {
+                    params.append(item.name, item.value as string);
+                });
                 }
+                return {
+                url:'/admin/cafe/get-admin-cafes',
+                method:"GET",
+                params: params,
+                };
+            },
+                // query:() => {
+                //     return {
+                //         url:'/admin/cafe/get-admin-cafes',
+                //         method:"GET"
+                //     }
+                // }
             }),
             adminImportCafes: builder.mutation({
                 query:({data}) => {

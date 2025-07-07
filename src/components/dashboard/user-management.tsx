@@ -117,7 +117,7 @@ const UserManagement=() => {
             <CardTitle className="text-sm font-medium text-yellow-400">Paid Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="md:text-2xl font-bold">{analytics?.paidUsers?.length}</div>
+            <div className="md:text-2xl font-bold">{analytics?.paidUsers}</div>
           </CardContent>
         </Card>
         <Card>
@@ -133,7 +133,7 @@ const UserManagement=() => {
             <CardTitle className="text-sm text-yellow-400 font-medium">Suspended</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="md:text-2xl font-bold">{analytics?.suspendedUsers?.length}</div>
+            <div className="md:text-2xl font-bold">{analytics?.suspendedUsers}</div>
           </CardContent>
         </Card>
       </div>
@@ -222,7 +222,7 @@ const UserManagement=() => {
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleAction(user, "suspend")}>
+                          <DropdownMenuItem onClick={() => handleAction(user, user.isSuspend ? "Unsuspend" : "suspend")}>
                             <Ban className="h-4 w-4 mr-2" />
                             {user.isSuspend
  === true ? "Unsuspend" : "Suspend"}
@@ -254,6 +254,7 @@ const UserManagement=() => {
       <UserActionModals
         user={selectedUser}
         actionType={actionType}
+        setActionType={setActionType}
         onClose={() => {
           setSelectedUser(null)
           setActionType(null)

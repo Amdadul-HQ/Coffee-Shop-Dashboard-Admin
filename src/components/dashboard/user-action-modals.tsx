@@ -35,19 +35,16 @@ interface UserActionModalsProps {
   user: User | null
   actionType: TActionType
   onClose: () => void
+  setActionType: any
 }
 
-const UserActionModals =({ user, actionType, onClose }: UserActionModalsProps) => {
+const UserActionModals =({ user, actionType, onClose,setActionType }: UserActionModalsProps) => {
   const [reason, setReason] = useState("")
   const [suspendUser, { isLoading }] = useUserSuspendMutation();
   const [unSuspenndUser,{isLoading:unSuspendingLoading}] = useUserUnSuspendMutation();
   const [forceLogout,{isLoading:forceLogoutLoading}] = useForceLogoutMutation()
   const [resetPassword,{isLoading:resetPassowrdLoading}] = useResetPasswordMutation();
-  const {
-   data,
-   isFetching: isFetchingUser,
-   error: userError,
- } = useGetUserDetailsQuery({id:user?.id});
+
   const [newSubscription, setNewSubscription] = useState("")
   const handleSuspend = async () => {
     // Handle suspend/unsuspend logic
@@ -94,7 +91,7 @@ const UserActionModals =({ user, actionType, onClose }: UserActionModalsProps) =
   return (
     <>
       {/* Suspend/Unsuspend Modal */}
-      <Dialog open={actionType === "suspend"} onOpenChange={onClose}>
+      <Dialog open={actionType === "suspend"  || actionType === "Unsuspend"} onOpenChange={onClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{user.isSuspend ? "Unsuspend" : "Suspend"} User</DialogTitle>
@@ -162,13 +159,13 @@ const UserActionModals =({ user, actionType, onClose }: UserActionModalsProps) =
         </DialogContent>
       </Dialog>
 
-       {/* Subscription Management Modal */}
+       {/* User Details */}
       <Dialog open={actionType === "view"} onOpenChange={onClose}>
         <DialogContent className="max-w-[1000px] h-[calc(100vh-100px)] overflow-auto">
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
           </DialogHeader>
-          <UserDetail onBack={onClose} user={data?.data}/>
+          <UserDetail setActionType={setActionType}  onBack={onClose} userId={user.id}/>
         </DialogContent>
       </Dialog>
 
