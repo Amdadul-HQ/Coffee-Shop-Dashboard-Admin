@@ -33,7 +33,7 @@ import {
   Clock,
   Star,
 } from "lucide-react"
-import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
+import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminFlaggedContentRemoveMutation, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminPendingCafeRejectMutation, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
 import EditShopForm from "./editShopForm"
 import { useDebounce } from "../../function/useDebounce"
 
@@ -151,11 +151,13 @@ const CoffeeShopManagement=() => {
 // const [adminCafeApproveCafe,{isLoading}] = useAdminCafeApproveCafeMutation()
 const coffeeShops = data?.data
 const pendingCafe = pendingCafeData?.data
-console.log(flagged)
 const [adminCafeApproveCafe,{isLoading:loadingApprovedCafe}] = useAdminCafeApproveCafeMutation()
 const {data:duplicateData,isFetching:loadingDuplicate} = useAdminDuplicateCafeQuery(undefined)
-
+const [adminFlaggedContentRemove,{isLoading:loadingFlaggedContentRemove}] = useAdminFlaggedContentRemoveMutation()
 const duplicate = duplicateData?.data
+console.log(duplicate)
+const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCafeRejectMutation()
+// console.log(duplicate)
   // const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
   // const [adminUpdateCafe,{isLoading:loadingCafeUpdate}] = useAdminUpdateCafeMutation();
   const handleSelectShop = (shopId: number) => {
@@ -171,8 +173,8 @@ const duplicate = duplicateData?.data
     console.log(`Rejecting shop ${shopId}`)
   }
 
-  const handleMergeDuplicates = (groupId: string, primaryId: number) => {
-    console.log(`Merging duplicates in group ${groupId}, keeping ${primaryId}`)
+  const handleMergeDuplicates = (groupId: object, primaryId: number) => {
+    console.dir(`Merging duplicates in group ${groupId}, keeping ${primaryId}`,{Infinity})
   }
 
   const handleBulkExport = () => {
@@ -231,7 +233,7 @@ const duplicate = duplicateData?.data
               <Merge className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{duplicate.length}</div>
+              <div className="text-2xl font-bold">{duplicate?.length}</div>
               <p className="text-xs text-muted-foreground">Groups to merge</p>
             </CardContent>
           </Card>
@@ -373,7 +375,7 @@ const duplicate = duplicateData?.data
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Approve
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleRejectShop(shop.id)}>
+                            <Button variant="outline" size="sm" onClick={() => adminCafePendingReject({id:shop.id})}>
                               <XCircle className="h-4 w-4 mr-1" />
                               Reject
                             </Button>
@@ -423,7 +425,7 @@ const duplicate = duplicateData?.data
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Resolve
                             </Button>
-                            <Button size="sm" variant="destructive">
+                            <Button onClick={()=>{adminFlaggedContentRemove({id:shop.id})}} size="sm" variant="destructive">
                               <Trash2 className="h-4 w-4 mr-1" />
                               Remove
                             </Button>
@@ -456,9 +458,9 @@ const duplicate = duplicateData?.data
                         <div key={shop.id} className="flex items-center justify-between p-2 bg-muted rounded">
                           <div>
                             <div className="font-medium">{shop.name}</div>
-                            <div className="text-sm text-muted-foreground">{shop.address}</div>
+                            <div className="text-sm text-muted-foreground">{shop?.country}, {shop?.state}, {shop?.city}</div>
                           </div>
-                          <Button size="sm" onClick={() => handleMergeDuplicates(group.id, shop.id)}>
+                          <Button size="sm" onClick={() => handleMergeDuplicates(shop, shop.id)}>
                             Keep This One
                           </Button>
                         </div>

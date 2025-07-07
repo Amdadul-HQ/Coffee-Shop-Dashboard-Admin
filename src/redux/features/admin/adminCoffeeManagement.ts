@@ -128,8 +128,26 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                 };
                 },
                 providesTags:["duplicateCafe"]
+            }),
+            adminFlaggedContentRemove:builder.mutation({
+                query:({id}) => {
+                  return {
+                    url:`/admin/cafe-flagged-content/${id}`,
+                    method:"DELETE"
+                  }
+                },
+                invalidatesTags:["flaggedContent"]
+            }),
+            adminPendingCafeReject:builder.mutation({
+                query:({id}) => {
+                    return{
+                        url:`/admin/cafe/reject-cafe/${id}`,
+                        method:"PATCH"
+                    }
+                },
+                invalidatesTags:["pendingCafe","coffeeShop"]
             })
           })
 })
 
-export const {useAdminDuplicateCafeQuery,useAdminGetAllCafePendingQuery,useAdminCafeFlaggedResolveMutation,useAdminGetFlaggedContentQuery,useAdminCafeDeleteMutation,useAdminGetAllCafeQuery,useAdminImportCafesMutation,useAdminCafeExportQuery,useAdminUpdateCafeMutation,useAdminCafeApproveCafeMutation,useAdminCafeMergeCafeMutation} = adminCoffeeManagement;
+export const {useAdminPendingCafeRejectMutation,useAdminFlaggedContentRemoveMutation,useAdminDuplicateCafeQuery,useAdminGetAllCafePendingQuery,useAdminCafeFlaggedResolveMutation,useAdminGetFlaggedContentQuery,useAdminCafeDeleteMutation,useAdminGetAllCafeQuery,useAdminImportCafesMutation,useAdminCafeExportQuery,useAdminUpdateCafeMutation,useAdminCafeApproveCafeMutation,useAdminCafeMergeCafeMutation} = adminCoffeeManagement;
