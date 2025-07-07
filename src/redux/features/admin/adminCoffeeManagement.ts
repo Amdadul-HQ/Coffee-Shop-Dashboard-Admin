@@ -18,7 +18,8 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                     url: `/admin/cafe/approve-cafe/${id}`,
                     method: "PATCH",
                     }
-                }
+                },
+                invalidatesTags:["pendingCafe"]
             }),
             adminCafeMergeCafe :builder.mutation({
                 query:({sourceId,targetId}) => {
@@ -33,7 +34,7 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                 const params = new URLSearchParams();
                 if (args) {
                 args.forEach((item: any) => {
-                    params.append(item.name, item.value as string);
+                    params.append(item.name, item.value);
                 });
                 }
                 return {
@@ -44,6 +45,23 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
             },
             providesTags: ["coffeeShop"],
             }),
+            adminGetFlaggedContent:builder.query({
+                query:(args) => {
+                    const params = new URLSearchParams();
+                if (args) {
+                args.forEach((item: any) => {
+                    params.append(item.name, item.value);
+                });
+                }
+                return {
+                url:'/admin/cafe-flagged-content',
+                method:"GET",
+                params: params,
+                };
+                },
+                providesTags:["flaggedContent"]
+            })
+            ,
             adminImportCafes: builder.mutation({
                 query:({data}) => {
                     return {
@@ -60,8 +78,58 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                         method:"GET"
                     }
                 }
+            }),
+            adminCafeDelete:builder.mutation({
+                query:({id}) => {
+                    return {
+                        url:`/admin/cafe/delete-cafe/${id}`,
+                        method:"DELETE"
+                    }
+                },
+                invalidatesTags:["coffeeShop"]
+            }),
+            adminCafeFlaggedResolve:builder.mutation({
+                query:({id}) => {
+                    return {
+                        url:`/admin/cafe-flagged-content/resolve/${id}`,
+                        method:"PATCH"
+                    }
+                },
+                invalidatesTags:["flaggedContent"]
+            }),
+            adminGetAllCafePending:builder.query({
+                query:(args) => {
+                    const params = new URLSearchParams();
+                if (args) {
+                args.forEach((item: any) => {
+                    params.append(item.name, item.value);
+                });
+                }
+                return {
+                url:'/admin/cafe/get-pending-cafes',
+                method:"GET",
+                params: params,
+                };
+                },
+                providesTags:["pendingCafe"]
+            }),
+            adminDuplicateCafe:builder.query({
+                query:(args) => {
+                    const params = new URLSearchParams();
+                if (args) {
+                args.forEach((item: any) => {
+                    params.append(item.name, item.value);
+                });
+                }
+                return {
+                url:'/admin/cafe/get-duplicate-cafes',
+                method:"GET",
+                params: params,
+                };
+                },
+                providesTags:["duplicateCafe"]
             })
           })
 })
 
-export const {useAdminGetAllCafeQuery,useAdminImportCafesMutation,useAdminCafeExportQuery,useAdminUpdateCafeMutation,useAdminCafeApproveCafeMutation,useAdminCafeMergeCafeMutation} = adminCoffeeManagement;
+export const {useAdminDuplicateCafeQuery,useAdminGetAllCafePendingQuery,useAdminCafeFlaggedResolveMutation,useAdminGetFlaggedContentQuery,useAdminCafeDeleteMutation,useAdminGetAllCafeQuery,useAdminImportCafesMutation,useAdminCafeExportQuery,useAdminUpdateCafeMutation,useAdminCafeApproveCafeMutation,useAdminCafeMergeCafeMutation} = adminCoffeeManagement;

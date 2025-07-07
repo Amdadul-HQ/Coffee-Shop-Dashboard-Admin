@@ -31,7 +31,7 @@ const adminManagementApi = baseApi.injectEndpoints({
         query:({id}) => {
         return {
             url:`/admin/user/suspend-user/${id}`,
-            method:"GET"
+            method:"PATCH"
         }
     },
     invalidatesTags: ["users"],
@@ -40,7 +40,7 @@ const adminManagementApi = baseApi.injectEndpoints({
          query:({id}) => {
         return {
             url:`/admin/user/unsuspend-user/${id}`,
-            method:"GET"
+            method:"PATCH"
         }
     },
     invalidatesTags: ["users"],
@@ -58,7 +58,7 @@ const adminManagementApi = baseApi.injectEndpoints({
         query:({id}) => {
             return {
                 url:`/admin/user/reset-password/${id}`,
-                method:"GET"
+                method:"PATCH"
             }
         },
         invalidatesTags: ["users"],

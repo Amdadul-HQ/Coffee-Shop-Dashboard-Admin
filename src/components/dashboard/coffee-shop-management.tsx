@@ -33,7 +33,7 @@ import {
   Clock,
   Star,
 } from "lucide-react"
-import { useAdminCafeApproveCafeMutation, useAdminCafeMergeCafeMutation, useAdminGetAllCafeQuery, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
+import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
 import EditShopForm from "./editShopForm"
 import { useDebounce } from "../../function/useDebounce"
 
@@ -74,82 +74,94 @@ import { useDebounce } from "../../function/useDebounce"
 //   },
 // ]
 
-const pendingShops = [
-  {
-    id: 4,
-    name: "Corner Café",
-    address: "321 Elm St, Austin, TX",
-    phone: "(555) 456-7890",
-    rating: null,
-    status: "pending",
-    submittedBy: "user789",
-    createdAt: "2024-01-28",
-    flagged: false,
-  },
-  {
-    id: 5,
-    name: "Morning Grind",
-    address: "654 Maple Dr, Denver, CO",
-    phone: "(555) 567-8901",
-    rating: null,
-    status: "pending",
-    submittedBy: "user101",
-    createdAt: "2024-01-30",
-    flagged: false,
-  },
-]
+// const pendingShops = [
+//   {
+//     id: 4,
+//     name: "Corner Café",
+//     address: "321 Elm St, Austin, TX",
+//     phone: "(555) 456-7890",
+//     rating: null,
+//     status: "pending",
+//     submittedBy: "user789",
+//     createdAt: "2024-01-28",
+//     flagged: false,
+//   },
+//   {
+//     id: 5,
+//     name: "Morning Grind",
+//     address: "654 Maple Dr, Denver, CO",
+//     phone: "(555) 567-8901",
+//     rating: null,
+//     status: "pending",
+//     submittedBy: "user101",
+//     createdAt: "2024-01-30",
+//     flagged: false,
+//   },
+// ]
 
-const flaggedShops = [
-  {
-    id: 6,
-    name: "Sketchy Coffee",
-    address: "999 Suspicious St, Unknown, XX",
-    phone: "(555) 999-9999",
-    rating: 1.2,
-    status: "flagged",
-    submittedBy: "user999",
-    createdAt: "2024-01-31",
-    flagged: true,
-    flagReason: "Inappropriate content in description",
-  },
-]
+// const flaggedShops = [
+//   {
+//     id: 6,
+//     name: "Sketchy Coffee",
+//     address: "999 Suspicious St, Unknown, XX",
+//     phone: "(555) 999-9999",
+//     rating: 1.2,
+//     status: "flagged",
+//     submittedBy: "user999",
+//     createdAt: "2024-01-31",
+//     flagged: true,
+//     flagReason: "Inappropriate content in description",
+//   },
+// ]
 
-const duplicateGroups = [
-  {
-    id: "dup1",
-    shops: [
-      { id: 7, name: "Blue Bottle Coffee", address: "123 Main St, San Francisco, CA" },
-      { id: 8, name: "Blue Bottle Cafe", address: "123 Main Street, San Francisco, CA" },
-    ],
-  },
-  {
-    id: "dup2",
-    shops: [
-      { id: 9, name: "Starbucks Downtown", address: "100 1st Ave, Seattle, WA" },
-      { id: 10, name: "Starbucks - Downtown", address: "100 First Avenue, Seattle, WA" },
-    ],
-  },
-]
+// const duplicateGroups = [
+//   {
+//     id: "dup1",
+//     shops: [
+//       { id: 7, name: "Blue Bottle Coffee", address: "123 Main St, San Francisco, CA" },
+//       { id: 8, name: "Blue Bottle Cafe", address: "123 Main Street, San Francisco, CA" },
+//     ],
+//   },
+//   {
+//     id: "dup2",
+//     shops: [
+//       { id: 9, name: "Starbucks Downtown", address: "100 1st Ave, Seattle, WA" },
+//       { id: 10, name: "Starbucks - Downtown", address: "100 First Avenue, Seattle, WA" },
+//     ],
+//   },
+// ]
 
 const CoffeeShopManagement=() => {
   const [searchTerm, setSearchTerm] = useState("")
-  
+  const [activeTab, setActiveTab] = useState("shops")
   const [selectedShops, setSelectedShops] = useState<number[]>([])
   const [editingShop, setEditingShop] = useState<any>(null)
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const {data:flaggedContent,isFetching:loadingFlaggedContent} = useAdminGetFlaggedContentQuery(undefined);
+  const flagged = flaggedContent?.data
+  const [flaggedContentResolve,{isLoading}] = useAdminCafeFlaggedResolveMutation()
+  const {data:pendingCafeData,isFetching:loadingPendingCafe} = useAdminGetAllCafePendingQuery(undefined)
   const {data,isFetching} = useAdminGetAllCafeQuery([
   { name: "search", value: debouncedSearchTerm },
   { name: "limit", value: "10" },
+  { name: "isApproved", value: "true" },
   { name: "offset", value: "0" },
 ])
-  // const [adminCafeApproveCafe,{isLoading}] = useAdminCafeApproveCafeMutation()
-  const coffeeShops = data?.data
+  const [deleteCafe,{isLoading:loadingDeleteCafe}] = useAdminCafeDeleteMutation()
+// const [adminCafeApproveCafe,{isLoading}] = useAdminCafeApproveCafeMutation()
+const coffeeShops = data?.data
+const pendingCafe = pendingCafeData?.data
+console.log(flagged)
+const [adminCafeApproveCafe,{isLoading:loadingApprovedCafe}] = useAdminCafeApproveCafeMutation()
+const {data:duplicateData,isFetching:loadingDuplicate} = useAdminDuplicateCafeQuery(undefined)
 
+const duplicate = duplicateData?.data
   // const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
   // const [adminUpdateCafe,{isLoading:loadingCafeUpdate}] = useAdminUpdateCafeMutation();
   const handleSelectShop = (shopId: number) => {
     setSelectedShops((prev) => (prev.includes(shopId) ? prev.filter((id) => id !== shopId) : [...prev, shopId]))
   }
+
 
   const handleApproveShop = (shopId: number) => {
     console.log(`Approving shop ${shopId}`)
@@ -199,7 +211,7 @@ const CoffeeShopManagement=() => {
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{pendingShops.length}</div>
+              <div className="text-2xl font-bold">{pendingCafe?.length}</div>
               <p className="text-xs text-muted-foreground">Awaiting review</p>
             </CardContent>
           </Card>
@@ -209,7 +221,7 @@ const CoffeeShopManagement=() => {
               <Flag className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{flaggedShops.length}</div>
+              <div className="text-2xl font-bold">{flagged?.length}</div>
               <p className="text-xs text-muted-foreground">Needs attention</p>
             </CardContent>
           </Card>
@@ -219,14 +231,14 @@ const CoffeeShopManagement=() => {
               <Merge className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{duplicateGroups.length}</div>
+              {/* <div className="text-2xl font-bold">{duplicateGroups.length}</div> */}
               <p className="text-xs text-muted-foreground">Groups to merge</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="shops" className="space-y-4">
+        <Tabs  value={activeTab} onValueChange={setActiveTab} defaultValue="shops" className="space-y-4">
           <TabsList>
             <TabsTrigger className="md:text-sm text-xs px-2 md:px-3" value="shops">All Shops</TabsTrigger>
             <TabsTrigger className="md:text-sm text-xs px-2 md:px-3" value="pending">Pending Approval</TabsTrigger>
@@ -318,7 +330,7 @@ const CoffeeShopManagement=() => {
 
                             </DialogContent>
                           </Dialog>
-                          <Button variant="ghost" size="sm">
+                          <Button onClick={()=>deleteCafe({id:shop.id})} variant="ghost" size="sm">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -349,15 +361,15 @@ const CoffeeShopManagement=() => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pendingShops.map((shop) => (
+                    {pendingCafe?.map((shop:any) => (
                       <TableRow key={shop.id}>
                         <TableCell className="font-medium">{shop.name}</TableCell>
-                        <TableCell>{shop?.address}</TableCell>
+                        <TableCell>{shop?.country}<br/>{shop?.state}, {shop?.city}</TableCell>
                         <TableCell>{shop?.submittedBy}</TableCell>
                         <TableCell>{shop?.createdAt}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <Button size="sm" onClick={() => handleApproveShop(shop.id)}>
+                            <Button size="sm" onClick={() => adminCafeApproveCafe({id:shop?.id})}>
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Approve
                             </Button>
@@ -397,17 +409,17 @@ const CoffeeShopManagement=() => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {flaggedShops.map((shop) => (
+                    {flagged?.map((shop:any) => (
                       <TableRow key={shop.id}>
                         <TableCell className="font-medium">{shop.name}</TableCell>
                         <TableCell>
-                          <Badge variant="destructive">{shop.flagReason}</Badge>
+                          <Badge variant="destructive">{shop.reason}</Badge>
                         </TableCell>
-                        <TableCell>{shop.submittedBy}</TableCell>
-                        <TableCell>{shop.createdAt}</TableCell>
+                        <TableCell>{shop.userId}</TableCell>
+                        <TableCell>{new Date(shop.createdAt).toDateString()}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <Button size="sm" variant="outline">
+                            <Button onClick={() => {flaggedContentResolve({id:shop.id})}} size="sm" variant="outline">
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Resolve
                             </Button>
@@ -436,11 +448,11 @@ const CoffeeShopManagement=() => {
                 <CardDescription>Merge duplicate coffee shop entries</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {duplicateGroups.map((group) => (
+                {duplicate?.map((group) => (
                   <div key={group.id} className="border rounded-lg p-4">
                     <h4 className="font-medium mb-3">Potential Duplicates</h4>
                     <div className="space-y-2">
-                      {group.shops.map((shop) => (
+                      {group?.map((shop) => (
                         <div key={shop.id} className="flex items-center justify-between p-2 bg-muted rounded">
                           <div>
                             <div className="font-medium">{shop.name}</div>
