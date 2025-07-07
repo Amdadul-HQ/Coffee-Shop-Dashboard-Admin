@@ -157,11 +157,25 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["pendingCafe", "coffeeShop"],
         }),
+
+        // ✅ export coffee shop list
+        adminExportCafe: builder.mutation<Blob, void>({
+        query: () => ({
+            url: '/admin/cafe/export-cafes',
+            method: 'GET',
+            responseHandler: (response) => response.blob(), // Important!
+        }),
+        // Optional: you can mark it as non-json
+        extraOptions: {
+            responseType: 'blob',
+        },
+        })
     }),
 });
 
 // Exporting auto-generated hooks for each endpoint
 export const {
+    useAdminExportCafeMutation,
     useAdminPendingCafeRejectMutation,
     useAdminFlaggedContentRemoveMutation,
     useAdminDuplicateCafeQuery,

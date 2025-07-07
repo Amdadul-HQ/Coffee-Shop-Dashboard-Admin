@@ -33,7 +33,7 @@ import {
   Clock,
   Star,
 } from "lucide-react"
-import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminFlaggedContentRemoveMutation, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminPendingCafeRejectMutation, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
+import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminExportCafeMutation, useAdminFlaggedContentRemoveMutation, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminPendingCafeRejectMutation, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
 import EditShopForm from "./editShopForm"
 import { useDebounce } from "../../function/useDebounce"
 import { toast } from "sonner"
@@ -158,6 +158,7 @@ const [adminFlaggedContentRemove,{isLoading:loadingFlaggedContentRemove}] = useA
 const duplicate = duplicateData?.data
 const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCafeRejectMutation()
 const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
+const [adminExportCafe,{isLoading:loadingExportCate}] = useAdminExportCafeMutation();
 // console.log(duplicate)
   // const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
   // const [adminUpdateCafe,{isLoading:loadingCafeUpdate}] = useAdminUpdateCafeMutation();
@@ -233,6 +234,23 @@ const handleMergeDuplicates = async (groups: any[], primaryId: number) => {
       toast.success("Flagged Content Removed")
     }
   }
+
+  const handleExportFile = async () => {
+  try {
+    const blob = await adminExportCafe().unwrap(); // unwrap to get raw blob
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cafes.csv'; // You can also parse this from `Content-Disposition` if needed
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('Download failed', err);
+  }
+};
 
   return (
     <div className="min-h-screen bg-background">
@@ -314,9 +332,9 @@ const handleMergeDuplicates = async (groups: any[], primaryId: number) => {
                   <Upload className="h-4 w-4 mr-2" />
                   Import
                 </Button>
-                <Button variant="outline" onClick={handleBulkExport} disabled={selectedShops.length === 0}>
+                <Button variant="outline" onClick={handleExportFile}>
                   <Download className="h-4 w-4 mr-2" />
-                  Export ({selectedShops.length})
+                  Export
                 </Button>
               </div>
             </div>

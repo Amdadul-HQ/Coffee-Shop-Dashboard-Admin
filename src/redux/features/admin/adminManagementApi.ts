@@ -32,9 +32,10 @@ const adminManagementApi = baseApi.injectEndpoints({
 
     // ✅ Mutation to suspend a user by ID
     userSuspend: builder.mutation({
-      query: ({ id }) => ({
-        url: `/admin/user/suspend-user/${id}`,
+      query: ({ id,reason }) => ({
+        url: `/user-suspend/suspend-a-user/${id}`,
         method: "PATCH",
+        body:{reason}
       }),
       invalidatesTags: ["users"], // Invalidate users cache after suspension
     }),
@@ -42,7 +43,7 @@ const adminManagementApi = baseApi.injectEndpoints({
     // ✅ Mutation to un-suspend a user by ID
     userUnSuspend: builder.mutation({
       query: ({ id }) => ({
-        url: `/admin/user/unsuspend-user/${id}`,
+        url: `/user-suspend/unsuspend-a-user/${id}`,
         method: "PATCH",
       }),
       invalidatesTags: ["users"], // Invalidate users cache after un-suspension

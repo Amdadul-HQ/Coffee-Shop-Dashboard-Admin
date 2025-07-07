@@ -50,7 +50,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
   const handleSuspend = async () => {
     // Handle suspend/unsuspend logic
     if(user?.id && actionType === "suspend"){
-      const res = await suspendUser({ id: user.id }).unwrap();
+      const res = await suspendUser({ id: user.id,reason:reason }).unwrap();
       console.log("Suspended user:", res);
       if(res?.success){
         toast.success(`${user.name} is Suspended Successfully`)
