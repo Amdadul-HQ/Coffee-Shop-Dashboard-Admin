@@ -1,155 +1,178 @@
 import { baseApi } from "../../api/baseApi";
 
-const adminCoffeeManagement = baseApi.injectEndpoints({ 
-         endpoints: (builder) => ({
-            adminUpdateCafe : builder.mutation({
-                query:({data,id}) => {
-                    return {
-                    url: `/admin/cafe/update-cafe/${id}`,
-                    method: "PATCH",
-                    body: data,
-                    }
-                },
-                invalidatesTags:["coffeeShop"]
+// Injecting admin-specific cafe management endpoints into baseApi
+const adminCoffeeManagement = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+
+        // ✅ Mutation to update cafe details by ID
+        adminUpdateCafe: builder.mutation({
+            query: ({ data, id }) => ({
+                url: `/admin/cafe/update-cafe/${id}`,
+                method: "PATCH",
+                body: data,
             }),
-            adminCafeApproveCafe: builder.mutation({
-                query:({id}) => {
-                    return {
-                    url: `/admin/cafe/approve-cafe/${id}`,
-                    method: "PATCH",
-                    }
-                },
-                invalidatesTags:["pendingCafe","coffeeShop"]
+            invalidatesTags: ["coffeeShop"], // Invalidate coffeeShop cache after update
+        }),
+
+        // ✅ Mutation to approve a pending cafe by ID
+        adminCafeApproveCafe: builder.mutation({
+            query: ({ id }) => ({
+                url: `/admin/cafe/approve-cafe/${id}`,
+                method: "PATCH",
             }),
-            adminCafeMergeCafe: builder.mutation({
-            query: ({ targetId, duplicateIds }) => {
-                return {
+            invalidatesTags: ["pendingCafe", "coffeeShop"], // Invalidate both pending and general cafes
+        }),
+
+        // ✅ Mutation to merge duplicate cafes into a target cafe
+        adminCafeMergeCafe: builder.mutation({
+            query: ({ targetId, duplicateIds }) => ({
                 url: `/admin/cafe/merge-cafes/${targetId}`,
                 method: "PATCH",
-                body: { duplicateIds }, // ✅ Fix: Proper payload structure
-                };
-            },
-            invalidatesTags: ['duplicateCafe'],
+                body: { duplicateIds }, // Payload contains IDs of duplicates to merge
             }),
-            adminGetAllCafe: builder.query({
-                query: (args) => {
+            invalidatesTags: ["duplicateCafe"],
+        }),
+
+        // ✅ Query to fetch all cafes with optional filtering params
+        adminGetAllCafe: builder.query({
+            query: (args) => {
                 const params = new URLSearchParams();
                 if (args) {
-                args.forEach((item: any) => {
-                    params.append(item.name, item.value);
-                });
+                    args.forEach((item: any) => {
+                        params.append(item.name, item.value);
+                    });
                 }
                 return {
-                url:'/admin/cafe/get-admin-cafes',
-                method:"GET",
-                params: params,
+                    url: '/admin/cafe/get-admin-cafes',
+                    method: "GET",
+                    params,
                 };
             },
             providesTags: ["coffeeShop"],
-            }),
-            adminGetFlaggedContent:builder.query({
-                query:(args) => {
-                    const params = new URLSearchParams();
-                if (args) {
-                args.forEach((item: any) => {
-                    params.append(item.name, item.value);
-                });
-                }
-                return {
-                url:'/admin/cafe-flagged-content',
-                method:"GET",
-                params: params,
-                };
-                },
-                providesTags:["flaggedContent"]
-            })
-            ,
-            adminImportCafes: builder.mutation({
-                query:({data}) => {
-                    return {
-                        url:'/admin/cafe/bulk-import-cafes',
-                        method:"POST",
-                        body:data
-                    }
-                }
-            }),
-            adminCafeExport :builder.query({
-                query:() => {
-                    return{
-                        url:'/admin/cafe/export-cafes',
-                        method:"GET"
-                    }
-                }
-            }),
-            adminCafeDelete:builder.mutation({
-                query:({id}) => {
-                    return {
-                        url:`/admin/cafe/delete-cafe/${id}`,
-                        method:"DELETE"
-                    }
-                },
-                invalidatesTags:["coffeeShop"]
-            }),
-            adminCafeFlaggedResolve:builder.mutation({
-                query:({id}) => {
-                    return {
-                        url:`/admin/cafe-flagged-content/resolve/${id}`,
-                        method:"PATCH"
-                    }
-                },
-                invalidatesTags:["flaggedContent"]
-            }),
-            adminGetAllCafePending:builder.query({
-                query:(args) => {
-                    const params = new URLSearchParams();
-                if (args) {
-                args.forEach((item: any) => {
-                    params.append(item.name, item.value);
-                });
-                }
-                return {
-                url:'/admin/cafe/get-pending-cafes',
-                method:"GET",
-                params: params,
-                };
-                },
-                providesTags:["pendingCafe"]
-            }),
-            adminDuplicateCafe:builder.query({
-                query:(args) => {
-                    const params = new URLSearchParams();
-                if (args) {
-                args.forEach((item: any) => {
-                    params.append(item.name, item.value);
-                });
-                }
-                return {
-                url:'/admin/cafe/get-duplicate-cafes',
-                method:"GET",
-                params: params,
-                };
-                },
-                providesTags:["duplicateCafe"]
-            }),
-            adminFlaggedContentRemove:builder.mutation({
-                query:({id}) => {
-                  return {
-                    url:`/admin/cafe-flagged-content/${id}`,
-                    method:"DELETE"
-                  }
-                },
-                invalidatesTags:["flaggedContent"]
-            }),
-            adminPendingCafeReject:builder.mutation({
-                query:({id}) => {
-                    return{
-                        url:`/admin/cafe/reject-cafe/${id}`,
-                        method:"PATCH"
-                    }
-                },
-                invalidatesTags:["pendingCafe","coffeeShop"]
-            })
-          })
-})
+        }),
 
-export const {useAdminPendingCafeRejectMutation,useAdminFlaggedContentRemoveMutation,useAdminDuplicateCafeQuery,useAdminGetAllCafePendingQuery,useAdminCafeFlaggedResolveMutation,useAdminGetFlaggedContentQuery,useAdminCafeDeleteMutation,useAdminGetAllCafeQuery,useAdminImportCafesMutation,useAdminCafeExportQuery,useAdminUpdateCafeMutation,useAdminCafeApproveCafeMutation,useAdminCafeMergeCafeMutation} = adminCoffeeManagement;
+        // ✅ Query to fetch all flagged content with optional filters
+        adminGetFlaggedContent: builder.query({
+            query: (args) => {
+                const params = new URLSearchParams();
+                if (args) {
+                    args.forEach((item: any) => {
+                        params.append(item.name, item.value);
+                    });
+                }
+                return {
+                    url: '/admin/cafe-flagged-content',
+                    method: "GET",
+                    params,
+                };
+            },
+            providesTags: ["flaggedContent"],
+        }),
+
+        // ✅ Mutation to bulk import cafes via file or structured data
+        adminImportCafes: builder.mutation({
+            query: ({ data }) => ({
+                url: '/admin/cafe/bulk-import-cafes',
+                method: "POST",
+                body: data,
+            }),
+        }),
+
+        // ✅ Query to export all cafes (typically returns a file)
+        adminCafeExport: builder.query({
+            query: () => ({
+                url: '/admin/cafe/export-cafes',
+                method: "GET",
+            }),
+        }),
+
+        // ✅ Mutation to delete a cafe by ID
+        adminCafeDelete: builder.mutation({
+            query: ({ id }) => ({
+                url: `/admin/cafe/delete-cafe/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["coffeeShop"],
+        }),
+
+        // ✅ Mutation to mark a flagged content item as resolved
+        adminCafeFlaggedResolve: builder.mutation({
+            query: ({ id }) => ({
+                url: `/admin/cafe-flagged-content/resolve/${id}`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["flaggedContent"],
+        }),
+
+        // ✅ Query to fetch pending cafes with optional filters
+        adminGetAllCafePending: builder.query({
+            query: (args) => {
+                const params = new URLSearchParams();
+                if (args) {
+                    args.forEach((item: any) => {
+                        params.append(item.name, item.value);
+                    });
+                }
+                return {
+                    url: '/admin/cafe/get-pending-cafes',
+                    method: "GET",
+                    params,
+                };
+            },
+            providesTags: ["pendingCafe"],
+        }),
+
+        // ✅ Query to get a list of duplicate cafes based on filters
+        adminDuplicateCafe: builder.query({
+            query: (args) => {
+                const params = new URLSearchParams();
+                if (args) {
+                    args.forEach((item: any) => {
+                        params.append(item.name, item.value);
+                    });
+                }
+                return {
+                    url: '/admin/cafe/get-duplicate-cafes',
+                    method: "GET",
+                    params,
+                };
+            },
+            providesTags: ["duplicateCafe"],
+        }),
+
+        // ✅ Mutation to delete a flagged content item by ID
+        adminFlaggedContentRemove: builder.mutation({
+            query: ({ id }) => ({
+                url: `/admin/cafe-flagged-content/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["flaggedContent"],
+        }),
+
+        // ✅ Mutation to reject a pending cafe by ID
+        adminPendingCafeReject: builder.mutation({
+            query: ({ id }) => ({
+                url: `/admin/cafe/reject-cafe/${id}`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["pendingCafe", "coffeeShop"],
+        }),
+    }),
+});
+
+// Exporting auto-generated hooks for each endpoint
+export const {
+    useAdminPendingCafeRejectMutation,
+    useAdminFlaggedContentRemoveMutation,
+    useAdminDuplicateCafeQuery,
+    useAdminGetAllCafePendingQuery,
+    useAdminCafeFlaggedResolveMutation,
+    useAdminGetFlaggedContentQuery,
+    useAdminCafeDeleteMutation,
+    useAdminGetAllCafeQuery,
+    useAdminImportCafesMutation,
+    useAdminCafeExportQuery,
+    useAdminUpdateCafeMutation,
+    useAdminCafeApproveCafeMutation,
+    useAdminCafeMergeCafeMutation
+} = adminCoffeeManagement;

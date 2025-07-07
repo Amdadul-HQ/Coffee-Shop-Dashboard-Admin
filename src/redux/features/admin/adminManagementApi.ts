@@ -1,7 +1,10 @@
 import { baseApi } from "../../api/baseApi";
 
+// Inject admin user management endpoints into the base API
 const adminManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
+    // ✅ Query to fetch all users with optional filtering parameters
     getAllUser: builder.query({
       query: (args) => {
         const params = new URLSearchParams();
@@ -13,66 +16,73 @@ const adminManagementApi = baseApi.injectEndpoints({
         return {
           url: "/admin/user/get-users",
           method: "GET",
-          params: params,
+          params,
         };
       },
-      providesTags: ["users"],
+      providesTags: ["users"], // Provides cache tag for invalidation
     }),
-    getUsersAnalytics:builder.query({
-        query:() => {
 
-        return {
-          url: "/admin/user/get-user-analytics",
-          method: "GET",
-        };
-        }
+    // ✅ Query to fetch analytics about users (e.g., count, growth, etc.)
+    getUsersAnalytics: builder.query({
+      query: () => ({
+        url: "/admin/user/get-user-analytics",
+        method: "GET",
+      }),
     }),
-    userSuspend:builder.mutation({
-        query:({id}) => {
-        return {
-            url:`/admin/user/suspend-user/${id}`,
-            method:"PATCH"
-        }
-    },
-    invalidatesTags: ["users"],
-    }),
-    userUnSuspend:builder.mutation({
-         query:({id}) => {
-        return {
-            url:`/admin/user/unsuspend-user/${id}`,
-            method:"PATCH"
-        }
-    },
-    invalidatesTags: ["users"],
-    }),
-    forceLogout:builder.mutation({
-         query:({id}) => {
-        return {
-            url:`/admin/user/force-logout/${id}`,
-            method:"GET"
-        }
-    },
-    invalidatesTags: ["users"],
-    }),
-    resetPassword:builder.mutation({
-        query:({id}) => {
-            return {
-                url:`/admin/user/reset-password/${id}`,
-                method:"PATCH"
-            }
-        },
-        invalidatesTags: ["users"],
-    }),
-    getUserDetails:builder.query({
-        query:({id}) => {
 
-        return {
-          url: `/admin/user/get-user/${id}`,
-          method: "GET",
-        };
-        }
+    // ✅ Mutation to suspend a user by ID
+    userSuspend: builder.mutation({
+      query: ({ id }) => ({
+        url: `/admin/user/suspend-user/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["users"], // Invalidate users cache after suspension
+    }),
+
+    // ✅ Mutation to un-suspend a user by ID
+    userUnSuspend: builder.mutation({
+      query: ({ id }) => ({
+        url: `/admin/user/unsuspend-user/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["users"], // Invalidate users cache after un-suspension
+    }),
+
+    // ✅ Mutation to force logout a user by ID (usually for security or admin override)
+    forceLogout: builder.mutation({
+      query: ({ id }) => ({
+        url: `/admin/user/force-logout/${id}`,
+        method: "GET", // Although GET is unusual for actions, used here as per backend
+      }),
+      invalidatesTags: ["users"],
+    }),
+
+    // ✅ Mutation to reset a user’s password (admin-initiated)
+    resetPassword: builder.mutation({
+      query: ({ id }) => ({
+        url: `/admin/user/reset-password/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["users"],
+    }),
+
+    // ✅ Query to get detailed information about a single user by ID
+    getUserDetails: builder.query({
+      query: ({ id }) => ({
+        url: `/admin/user/get-user/${id}`,
+        method: "GET",
+      }),
     }),
   }),
 });
 
-export const { useGetAllUserQuery,useGetUsersAnalyticsQuery,useUserSuspendMutation,useUserUnSuspendMutation, useForceLogoutMutation ,useResetPasswordMutation,useGetUserDetailsQuery } = adminManagementApi;
+// Export auto-generated hooks for usage in components
+export const {
+  useGetAllUserQuery,
+  useGetUsersAnalyticsQuery,
+  useUserSuspendMutation,
+  useUserUnSuspendMutation,
+  useForceLogoutMutation,
+  useResetPasswordMutation,
+  useGetUserDetailsQuery,
+} = adminManagementApi;
