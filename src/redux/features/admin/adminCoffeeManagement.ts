@@ -21,13 +21,15 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                 },
                 invalidatesTags:["pendingCafe","coffeeShop"]
             }),
-            adminCafeMergeCafe :builder.mutation({
-                query:({sourceId,targetId}) => {
-                    return {
-                    url: `/admin/cafe/merge-cafes/${sourceId}/${targetId}`,
-                    method: "GET",
-                    }
-                }
+            adminCafeMergeCafe: builder.mutation({
+            query: ({ targetId, duplicateIds }) => {
+                return {
+                url: `/admin/cafe/merge-cafes/${targetId}`,
+                method: "PATCH",
+                body: { duplicateIds }, // ✅ Fix: Proper payload structure
+                };
+            },
+            invalidatesTags: ['duplicateCafe'],
             }),
             adminGetAllCafe: builder.query({
                 query: (args) => {

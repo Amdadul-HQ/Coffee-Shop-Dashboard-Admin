@@ -157,6 +157,7 @@ const {data:duplicateData,isFetching:loadingDuplicate} = useAdminDuplicateCafeQu
 const [adminFlaggedContentRemove,{isLoading:loadingFlaggedContentRemove}] = useAdminFlaggedContentRemoveMutation()
 const duplicate = duplicateData?.data
 const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCafeRejectMutation()
+const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
 // console.log(duplicate)
   // const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
   // const [adminUpdateCafe,{isLoading:loadingCafeUpdate}] = useAdminUpdateCafeMutation();
@@ -180,9 +181,30 @@ const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCa
     }
   }
 
-  const handleMergeDuplicates = (groupId: object, primaryId: number) => {
-    console.dir(`Merging duplicates in group ${groupId}, keeping ${primaryId}`,{Infinity})
+const handleMergeDuplicates = async (groups: any[], primaryId: number) => {
+  const duplicateIds = groups
+    .map(group => String(group?.id))
+    .filter(id => id !== String(primaryId));
+
+  if (!duplicateIds.length) {
+    toast.error("No duplicates to merge");
+    return;
   }
+
+  try {
+    const res = await adminCafeMergeCafe({
+      targetId: String(primaryId),
+      duplicateIds,
+    }).unwrap();
+
+    if (res?.success) {
+      toast.success("Caffe Shop Merged");
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error("Merge failed");
+  }
+};
 
   const handleBulkExport = () => {
     console.log("Exporting selected shops:", selectedShops)
@@ -487,7 +509,7 @@ const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCa
                             <div className="font-medium">{shop.name}</div>
                             <div className="text-sm text-muted-foreground">{shop?.country}, {shop?.state}, {shop?.city}</div>
                           </div>
-                          <Button size="sm" onClick={() => handleMergeDuplicates(shop, shop.id)}>
+                          <Button size="sm" onClick={() => handleMergeDuplicates(group, shop.id)}>
                             Keep This One
                           </Button>
                         </div>
