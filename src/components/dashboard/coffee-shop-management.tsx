@@ -231,7 +231,7 @@ const duplicate = duplicateData?.data
               <Merge className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {/* <div className="text-2xl font-bold">{duplicateGroups.length}</div> */}
+              <div className="text-2xl font-bold">{duplicate.length}</div>
               <p className="text-xs text-muted-foreground">Groups to merge</p>
             </CardContent>
           </Card>
@@ -448,11 +448,11 @@ const duplicate = duplicateData?.data
                 <CardDescription>Merge duplicate coffee shop entries</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {duplicate?.map((group) => (
+                {duplicate?.map((group:any) => (
                   <div key={group.id} className="border rounded-lg p-4">
                     <h4 className="font-medium mb-3">Potential Duplicates</h4>
                     <div className="space-y-2">
-                      {group?.map((shop) => (
+                      {group?.map((shop:any) => (
                         <div key={shop.id} className="flex items-center justify-between p-2 bg-muted rounded">
                           <div>
                             <div className="font-medium">{shop.name}</div>

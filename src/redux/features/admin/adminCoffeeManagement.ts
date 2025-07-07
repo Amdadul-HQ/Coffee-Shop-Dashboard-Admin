@@ -19,7 +19,7 @@ const adminCoffeeManagement = baseApi.injectEndpoints({
                     method: "PATCH",
                     }
                 },
-                invalidatesTags:["pendingCafe"]
+                invalidatesTags:["pendingCafe","coffeeShop"]
             }),
             adminCafeMergeCafe :builder.mutation({
                 query:({sourceId,targetId}) => {
