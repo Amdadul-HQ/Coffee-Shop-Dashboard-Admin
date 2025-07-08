@@ -5,21 +5,6 @@ import { Badge } from "../ui/badge"
 import { Separator } from "../ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { useGetUserDetailsQuery } from "../../redux/features/admin/adminManagementApi"
-interface User {
-  id: string
-  name: string
-  email: string
-  subscriptionPlan: "free" | "paid"
-  createdAt: string
-  lastActivity: string
-  isSuspend: boolean
-  ratings: number
-  notes: number
-  favorites: number
-  subscriptionStart:string
-  subscriptionEnd:string
-  totalSpent:string
-}
 interface UserDetailProps {
   userId: string
   onBack: () => void
@@ -30,8 +15,6 @@ const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
   console.log(userId)
     const {
      data,
-     isFetching: isFetchingUser,
-     error: userError,
    } = useGetUserDetailsQuery({id:userId});
 
    const user = data?.data

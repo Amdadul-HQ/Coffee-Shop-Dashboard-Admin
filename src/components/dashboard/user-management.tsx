@@ -8,7 +8,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Badge } from "../ui/badge"
 import UserActionModals from "./user-action-modals"
-import UserDetail from "./user-detail"
 import { useGetAllUserQuery, useGetUsersAnalyticsQuery } from "../../redux/features/admin/adminManagementApi"
 import { useDebounce } from "../../function/useDebounce"
 interface User {
@@ -28,13 +27,6 @@ interface User {
 type TActionType = "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
 
 const UserManagement=() => {
-  const [activeView, setActiveView] = useState<"users" | "paywall" | "user-detail">("users")
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
-
-  const handleBackToUsers = () => {
-    setActiveView("users")
-    setSelectedUserId(null)
-  }
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -57,7 +49,6 @@ const UserManagement=() => {
   // Call second query
   const {
     data: analyticsData,
-    isFetching: isFetchingAnalytics,
     error: analyticsError,
   } = useGetUsersAnalyticsQuery(undefined);
 

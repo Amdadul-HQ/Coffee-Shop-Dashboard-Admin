@@ -4,19 +4,16 @@ import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Input } from "../ui/input"
-import { Label } from "../ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Checkbox } from "../ui/checkbox"
 import {
   Coffee,
@@ -33,136 +30,41 @@ import {
   Clock,
   Star,
 } from "lucide-react"
-import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminExportCafeMutation, useAdminFlaggedContentRemoveMutation, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminPendingCafeRejectMutation, useAdminUpdateCafeMutation } from "../../redux/features/admin/adminCoffeeManagement"
+import { useAdminCafeApproveCafeMutation, useAdminCafeDeleteMutation, useAdminCafeFlaggedResolveMutation, useAdminCafeMergeCafeMutation, useAdminDuplicateCafeQuery, useAdminExportCafeMutation, useAdminFlaggedContentRemoveMutation, useAdminGetAllCafePendingQuery, useAdminGetAllCafeQuery, useAdminGetFlaggedContentQuery, useAdminPendingCafeRejectMutation } from "../../redux/features/admin/adminCoffeeManagement"
 import EditShopForm from "./editShopForm"
 import { useDebounce } from "../../function/useDebounce"
 import { toast } from "sonner"
 
-// Mock data
-// const coffeeShops = [
-//   {
-//     id: 1,
-//     name: "Blue Bottle Coffee",
-//     address: "123 Main St, San Francisco, CA",
-//     phone: "(555) 123-4567",
-//     rating: 4.5,
-//     status: "active",
-//     submittedBy: "admin",
-//     createdAt: "2024-01-15",
-//     flagged: false,
-//   },
-//   {
-//     id: 2,
-//     name: "Stumptown Coffee",
-//     address: "456 Oak Ave, Portland, OR",
-//     phone: "(555) 234-5678",
-//     rating: 4.3,
-//     status: "active",
-//     submittedBy: "user123",
-//     createdAt: "2024-01-20",
-//     flagged: false,
-//   },
-//   {
-//     id: 3,
-//     name: "Local Brew House",
-//     address: "789 Pine St, Seattle, WA",
-//     phone: "(555) 345-6789",
-//     rating: 4.1,
-//     status: "pending",
-//     submittedBy: "user456",
-//     createdAt: "2024-01-25",
-//     flagged: false,
-//   },
-// ]
-
-// const pendingShops = [
-//   {
-//     id: 4,
-//     name: "Corner Café",
-//     address: "321 Elm St, Austin, TX",
-//     phone: "(555) 456-7890",
-//     rating: null,
-//     status: "pending",
-//     submittedBy: "user789",
-//     createdAt: "2024-01-28",
-//     flagged: false,
-//   },
-//   {
-//     id: 5,
-//     name: "Morning Grind",
-//     address: "654 Maple Dr, Denver, CO",
-//     phone: "(555) 567-8901",
-//     rating: null,
-//     status: "pending",
-//     submittedBy: "user101",
-//     createdAt: "2024-01-30",
-//     flagged: false,
-//   },
-// ]
-
-// const flaggedShops = [
-//   {
-//     id: 6,
-//     name: "Sketchy Coffee",
-//     address: "999 Suspicious St, Unknown, XX",
-//     phone: "(555) 999-9999",
-//     rating: 1.2,
-//     status: "flagged",
-//     submittedBy: "user999",
-//     createdAt: "2024-01-31",
-//     flagged: true,
-//     flagReason: "Inappropriate content in description",
-//   },
-// ]
-
-// const duplicateGroups = [
-//   {
-//     id: "dup1",
-//     shops: [
-//       { id: 7, name: "Blue Bottle Coffee", address: "123 Main St, San Francisco, CA" },
-//       { id: 8, name: "Blue Bottle Cafe", address: "123 Main Street, San Francisco, CA" },
-//     ],
-//   },
-//   {
-//     id: "dup2",
-//     shops: [
-//       { id: 9, name: "Starbucks Downtown", address: "100 1st Ave, Seattle, WA" },
-//       { id: 10, name: "Starbucks - Downtown", address: "100 First Avenue, Seattle, WA" },
-//     ],
-//   },
-// ]
 
 const CoffeeShopManagement=() => {
   const [searchTerm, setSearchTerm] = useState("")
   const [activeTab, setActiveTab] = useState("shops")
-  const [selectedShops, setSelectedShops] = useState<number[]>([])
+  const [selectedShops] = useState<number[]>([])
   const [editingShop, setEditingShop] = useState<any>(null)
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const {data:flaggedContent,isFetching:loadingFlaggedContent} = useAdminGetFlaggedContentQuery(undefined);
+  const {data:flaggedContent} = useAdminGetFlaggedContentQuery(undefined);
   const flagged = flaggedContent?.data
-  const [flaggedContentResolve,{isLoading}] = useAdminCafeFlaggedResolveMutation()
-  const {data:pendingCafeData,isFetching:loadingPendingCafe} = useAdminGetAllCafePendingQuery(undefined)
+  const [flaggedContentResolve] = useAdminCafeFlaggedResolveMutation()
+  const {data:pendingCafeData} = useAdminGetAllCafePendingQuery(undefined)
   const {data,isFetching} = useAdminGetAllCafeQuery([
   { name: "search", value: debouncedSearchTerm },
   { name: "limit", value: "10" },
   { name: "isApproved", value: "true" },
   { name: "offset", value: "0" },
 ])
-  const [deleteCafe,{isLoading:loadingDeleteCafe}] = useAdminCafeDeleteMutation()
+  const [deleteCafe] = useAdminCafeDeleteMutation()
 // const [adminCafeApproveCafe,{isLoading}] = useAdminCafeApproveCafeMutation()
 const coffeeShops = data?.data
 const pendingCafe = pendingCafeData?.data
-const [adminCafeApproveCafe,{isLoading:loadingApprovedCafe}] = useAdminCafeApproveCafeMutation()
-const {data:duplicateData,isFetching:loadingDuplicate} = useAdminDuplicateCafeQuery(undefined)
-const [adminFlaggedContentRemove,{isLoading:loadingFlaggedContentRemove}] = useAdminFlaggedContentRemoveMutation()
+const [adminCafeApproveCafe] = useAdminCafeApproveCafeMutation()
+const {data:duplicateData} = useAdminDuplicateCafeQuery(undefined)
+const [adminFlaggedContentRemove] = useAdminFlaggedContentRemoveMutation()
 const duplicate = duplicateData?.data
-const [adminCafePendingReject,{isLoading:loadingCafeReject}] = useAdminPendingCafeRejectMutation()
-const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
-const [adminExportCafe,{isLoading:loadingExportCate}] = useAdminExportCafeMutation();
-// console.log(duplicate)
-  // const [adminCafeMergeCafe,{isLoading:loadingCafeMerge}] = useAdminCafeMergeCafeMutation()
-  // const [adminUpdateCafe,{isLoading:loadingCafeUpdate}] = useAdminUpdateCafeMutation();
-  const handleSelectShop = (shopId: string) => {
+const [adminCafePendingReject] = useAdminPendingCafeRejectMutation()
+const [adminCafeMergeCafe] = useAdminCafeMergeCafeMutation()
+const [adminExportCafe] = useAdminExportCafeMutation();
+  const handleSelectShop = (id: any) => {
+    console.log(id)
     // setSelectedShops((prev) => (prev.includes(shopId) ? prev.filter((id) => id !== shopId) : [...prev, shopId]))
   }
 
@@ -207,9 +109,6 @@ const handleMergeDuplicates = async (groups: any[], primaryId: number) => {
   }
 };
 
-  const handleBulkExport = () => {
-    console.log("Exporting selected shops:", selectedShops)
-  }
 
   const handleBulkImport = () => {
     console.log("Opening import dialog")

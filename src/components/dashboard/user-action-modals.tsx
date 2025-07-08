@@ -11,7 +11,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
-import { useForceLogoutMutation, useGetUserDetailsQuery, useResetPasswordMutation, useUserSuspendMutation, useUserUnSuspendMutation } from "../../redux/features/admin/adminManagementApi"
+import { useForceLogoutMutation, useResetPasswordMutation, useUserSuspendMutation, useUserUnSuspendMutation } from "../../redux/features/admin/adminManagementApi"
 import UserDetail from "./user-detail"
 import { toast } from "sonner"
 
@@ -41,10 +41,10 @@ interface UserActionModalsProps {
 
 const UserActionModals =({ user, actionType, onClose,setActionType }: UserActionModalsProps) => {
   const [reason, setReason] = useState("")
-  const [suspendUser, { isLoading }] = useUserSuspendMutation();
-  const [unSuspenndUser,{isLoading:unSuspendingLoading}] = useUserUnSuspendMutation();
-  const [forceLogout,{isLoading:forceLogoutLoading}] = useForceLogoutMutation()
-  const [resetPassword,{isLoading:resetPassowrdLoading}] = useResetPasswordMutation();
+  const [suspendUser] = useUserSuspendMutation();
+  const [unSuspenndUser] = useUserUnSuspendMutation();
+  const [forceLogout] = useForceLogoutMutation()
+  const [resetPassword] = useResetPasswordMutation();
 
   const [newSubscription, setNewSubscription] = useState("")
   const handleSuspend = async () => {

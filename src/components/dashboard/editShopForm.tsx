@@ -7,7 +7,7 @@ import { Label } from "../ui/label";
 import { toast } from "sonner";
 
 const EditShopForm = ({ shop, setEditingShop }: { shop: any; setEditingShop: any }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
       name: shop.name || "",
       country: shop.country || "",
