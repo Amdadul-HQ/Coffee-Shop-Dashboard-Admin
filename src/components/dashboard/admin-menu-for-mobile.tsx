@@ -1,12 +1,12 @@
 import { useState } from "react"
 import {  motion } from "motion/react"
-import { User, Shield, Coffee } from "lucide-react"
+import { User, Shield, Coffee, LayoutDashboard } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Link } from "react-router-dom"
 
 const tabs = [
   { name: "User Management", icon: User, path:"user-management" },
-  { name: "Paywall Control", icon: Shield, path:"paywall-control" },
+  { name: "Analytics", icon: LayoutDashboard, path:"analytics-and-tracking" },
   { name: "Coffee Shop Management", icon: Coffee, path:"coffee-shop-management" },
 ]
 
@@ -25,7 +25,7 @@ const MobileNavbar =()=> {
             key={tab.name}
             onClick={() => setActiveIndex(index)}
             className={cn(
-              "flex flex-col items-center justify-center px-4 py-1 relative text-sm transition-all",
+              "flex flex-col items-center justify-center px-4 py-1 h-full relative text-sm transition-all",
               isActive ? "text-white" : "text-zinc-400"
             )}
           >

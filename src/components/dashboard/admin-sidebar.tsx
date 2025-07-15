@@ -27,12 +27,12 @@ const AdminSidebar =() => {
       view: "users" as const,
       path: "user-management"
     },
-    {
-      title: "Paywall Control",
-      icon: Shield,
-      view: "paywall" as const,
-      path: "paywall-control"
-    },
+    // {
+    //   title: "Paywall Control",
+    //   icon: Shield,
+    //   view: "paywall" as const,
+    //   path: "paywall-control"
+    // },
     {
       title:"Coffee Shop Management",
       icon : Store,

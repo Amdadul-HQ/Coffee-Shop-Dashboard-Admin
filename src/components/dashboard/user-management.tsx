@@ -49,6 +49,7 @@ const UserManagement=() => {
   // Call second query
   const {
     data: analyticsData,
+    isFetching:isFetchingUserAnalytics,
     error: analyticsError,
   } = useGetUsersAnalyticsQuery(undefined);
 
@@ -94,7 +95,7 @@ const UserManagement=() => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-yellow-400">Total Users</CardTitle>
@@ -183,7 +184,7 @@ const UserManagement=() => {
               </TableHeader>
               <TableBody>
                 {
-                  isFetchingUsers ? (
+                  isFetchingUsers || isFetchingUserAnalytics ? (
     <TableRow>
       <TableCell colSpan={5} className="text-center">
         Loading users...

@@ -120,32 +120,6 @@ export default function LoginForm() {
           >
             Sign In
           </Button>
-
-          <div className="flex items-center gap-2 text-sm text-zinc-400">
-            <div className="h-px flex-1 bg-zinc-700" />
-            <span>Or</span>
-            <div className="h-px flex-1 bg-zinc-700" />
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full border-white text-white hover:bg-white hover:text-black"
-            // you can trigger Google OAuth here
-          >
-            <svg
-              className="mr-2 h-5 w-5"
-              viewBox="0 0 48 48"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M44.5 20H24V28H35.6C34.1 32.7 29.8 36 24 36C17.4 36 12 30.6 12 24C12 17.4 17.4 12 24 12C27.1 12 30 13.2 32.1 15.3L38.1 9.3C34.5 5.9 29.6 4 24 4C12.9 4 4 12.9 4 24C4 35.1 12.9 44 24 44C35.1 44 44 35.1 44 24C44 22.7 44.3 21.3 44.5 20Z"
-                fill="#FFC107"
-              />
-            </svg>
-            Sign In With Google
-          </Button>
         </div>
       </form>
     </motion.div>

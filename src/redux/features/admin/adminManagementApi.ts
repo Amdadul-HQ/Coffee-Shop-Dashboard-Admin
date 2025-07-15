@@ -28,6 +28,7 @@ const adminManagementApi = baseApi.injectEndpoints({
         url: "/admin/user/get-user-analytics",
         method: "GET",
       }),
+      providesTags:["users"]
     }),
 
     // ✅ Mutation to suspend a user by ID
