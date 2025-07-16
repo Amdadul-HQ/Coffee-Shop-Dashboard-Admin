@@ -10,6 +10,7 @@ import AnalyticsDashboard from "../components/dashboard/analytics-and-tracking";
 import ProtectedRoute from "./private/privateRoutes";
 import AccoutSuspend from "../pages/error/accoutSuspended";
 import AnnouncementPage from "../components/dashboard/announcement";
+import AnnouncementsList from "../components/dashboard/all-announcement";
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
         {
             path:'announcement',
             element:<AnnouncementPage/>
+        },
+        {
+            path:'all-announcement',
+            element:<AnnouncementsList/>
         }
     ]
     },
