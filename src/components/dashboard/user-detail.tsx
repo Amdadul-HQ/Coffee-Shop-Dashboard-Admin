@@ -11,7 +11,6 @@ interface UserDetailProps {
 }
 
 const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
-  console.log(userId)
     const {
      data,
    } = useGetUserDetailsQuery({id:userId});

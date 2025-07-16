@@ -18,6 +18,7 @@ import {z} from "zod"
 import { useForm } from "react-hook-form"
 import { FormField } from "../ui/form"
 import { Input } from "../ui/input"
+import { useAdminSendUserNotificationMutation } from "../../redux/features/admin/adminNotification"
 
 interface User {
   id: string;
@@ -55,11 +56,12 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
   const [forceLogout] = useForceLogoutMutation()
   const [resetPassword] = useResetPasswordMutation();
   const [newSubscription,setNewSubscription] = useState("")
+  const [sendNotification, { isLoading, isSuccess, isError }] = useAdminSendUserNotificationMutation();
   const {control,
     handleSubmit,
     reset,
     register,
-    formState: { errors },} = useForm()
+    formState: { errors },} = useForm<NotificationFormData>()
 
 
   const handleSuspend = async () => {
@@ -90,6 +92,8 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
     // force logout
     if(user?.id && actionType === "force-logout"){
       const res = await forceLogout({id:user.id})
+
+     
     if(res?.data?.success){
       toast.success(`${user.name}Force Logout Successfull`)
       onClose()
@@ -113,10 +117,32 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
     // setNewSubscription("")
   }
 
-  const onSubmit = (data: NotificationFormData) => {
-    onSend(data); // parent handler
-    reset();
-    onClose();
+  const onSubmit = async (data: NotificationFormData) => {
+    try {
+    const payload = {
+      data: data, // title + message
+      id: user?.id,     // user ID to send to
+    };
+
+    const res = await sendNotification(payload).unwrap();
+
+     if(isLoading){
+      toast.loading("Notification Sending")  
+    }
+    
+    if(isSuccess){
+      toast.success("Notification sent successfully!");
+      reset();
+      onClose();
+    }
+    if(isError){
+      toast.error("something went wrong")
+    }
+
+  } catch (err) {
+    toast.error("Failed to send notification");
+    console.error(err);
+  }
   };
 
   if (!user || !actionType) return null
@@ -252,11 +278,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
     {/* ✅ Hook Form Setup */}
     <form
-      onSubmit={()=>handleSubmit((data) => {
-        // handleSendNotification(data); // your API or logic
-        // reset(); // clear form
-        onClose(); // close dialog
-      })}
+      onSubmit={handleSubmit(onSubmit)}
       className="space-y-4"
     >
       <FormField
@@ -307,3 +329,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
 
 export default UserActionModals;
+
+function onSend(data: { title: string; message: string }) {
+  throw new Error("Function not implemented.")
+}
