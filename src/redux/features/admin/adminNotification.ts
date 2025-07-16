@@ -9,7 +9,14 @@ const adminNotification =  baseApi.injectEndpoints({
                 body: data,
             }),
         }),
+        adminAnnoucement: builder.mutation({
+            query: ({ data }) => ({
+                url: `/notification/announcements`,
+                method: "POST",
+                body: data,
+            }),
+        })
     })
 })
 
-export const {useAdminSendUserNotificationMutation} = adminNotification
+export const {useAdminSendUserNotificationMutation,useAdminAnnoucementMutation} = adminNotification

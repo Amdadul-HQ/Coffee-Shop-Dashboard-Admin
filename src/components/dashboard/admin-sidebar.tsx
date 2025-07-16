@@ -22,6 +22,12 @@ const AdminSidebar =() => {
       path: "analytics-and-tracking"
     },
     {
+      title:"Announcement",
+      icon : Megaphone,
+      view: "coffee" as const,
+      path: "announcement"
+    },
+    {
       title: "User Management",
       icon: Users,
       view: "users" as const,
@@ -39,12 +45,6 @@ const AdminSidebar =() => {
       view: "coffee" as const,
       path: "coffee-shop-management"
     },
-    {
-      title:"Announcement",
-      icon : Megaphone,
-      view: "coffee" as const,
-      path: "announcement"
-    }
   ]
 
   const location = useLocation();
