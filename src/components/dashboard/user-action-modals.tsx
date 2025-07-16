@@ -14,6 +14,10 @@ import { Textarea } from "../ui/textarea"
 import { useForceLogoutMutation, useResetPasswordMutation, useUserSuspendMutation, useUserUnSuspendMutation } from "../../redux/features/admin/adminManagementApi"
 import UserDetail from "./user-detail"
 import { toast } from "sonner"
+import {z} from "zod"
+import { useForm } from "react-hook-form"
+import { FormField } from "../ui/form"
+import { Input } from "../ui/input"
 
 interface User {
   id: string;
@@ -29,7 +33,7 @@ interface User {
 }
 
 
-type TActionType = "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
+type TActionType = "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | "notification" | null
 
 
 interface UserActionModalsProps {
@@ -38,6 +42,11 @@ interface UserActionModalsProps {
   onClose: () => void
   setActionType: any
 }
+const notificationSchema = z.object({
+title: z.string().min(1, "Title is required"),
+message: z.string().min(1, "Message is required"),
+});
+type NotificationFormData = z.infer<typeof notificationSchema>;
 
 const UserActionModals =({ user, actionType, onClose,setActionType }: UserActionModalsProps) => {
   const [reason, setReason] = useState("")
@@ -45,8 +54,14 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
   const [unSuspenndUser] = useUserUnSuspendMutation();
   const [forceLogout] = useForceLogoutMutation()
   const [resetPassword] = useResetPasswordMutation();
+  const [newSubscription,setNewSubscription] = useState("")
+  const {control,
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },} = useForm()
 
-  const [newSubscription, setNewSubscription] = useState("")
+
   const handleSuspend = async () => {
     // Handle suspend/unsuspend logic
     if(user?.id && actionType === "suspend"){
@@ -93,10 +108,16 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
   const handleSubscriptionChange = () => {
     // Handle subscription change logic
-    console.log("Changing subscription for user:", user?.id, "to:", newSubscription)
-    onClose()
-    setNewSubscription("")
+    // console.log("Changing subscription for user:", user?.id, "to:", newSubscription)
+    // onClose()
+    // setNewSubscription("")
   }
+
+  const onSubmit = (data: NotificationFormData) => {
+    onSend(data); // parent handler
+    reset();
+    onClose();
+  };
 
   if (!user || !actionType) return null
 
@@ -173,7 +194,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
        {/* User Details */}
       <Dialog open={actionType === "view"} onOpenChange={onClose}>
-        <DialogContent className="max-w-[1000px] h-[calc(100vh-100px)] overflow-auto">
+        <DialogContent className="max-w-[1000px] overflow-auto">
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
           </DialogHeader>
@@ -217,6 +238,69 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+
+      {/* Subscription Management Modal */}
+      <Dialog open={actionType === "notification"} onOpenChange={onClose}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Send Notification</DialogTitle>
+      <DialogDescription>
+        Send a message to <strong>{user.name}</strong>.
+      </DialogDescription>
+    </DialogHeader>
+
+    {/* ✅ Hook Form Setup */}
+    <form
+      onSubmit={()=>handleSubmit((data) => {
+        // handleSendNotification(data); // your API or logic
+        // reset(); // clear form
+        onClose(); // close dialog
+      })}
+      className="space-y-4"
+    >
+      <FormField
+        control={control}
+        name="title"
+        render={({ field }) => (
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" {...register("title")} placeholder="Enter title" />
+            {typeof errors.title?.message === "string" && (
+              <p className="text-sm text-red-500">{errors.title.message}</p>
+            )}
+          </div>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="message"
+        render={({ field }) => (
+          <div>
+            <Label htmlFor="message">Message</Label>
+            <Textarea
+              id="message"
+              rows={4}
+              placeholder="Write your message here..."
+              {...field}
+            />
+            {typeof errors.message?.message === "string" && (
+              <p className="text-sm text-red-500">{errors.message.message}</p>
+            )}
+          </div>
+        )}
+      />
+
+      <DialogFooter>
+        <Button type="button" variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button type="submit">Send Notification</Button>
+      </DialogFooter>
+    </form>
+  </DialogContent>
+</Dialog>
     </>
   )
 }

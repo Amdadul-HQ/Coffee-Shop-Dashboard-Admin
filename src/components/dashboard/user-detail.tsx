@@ -1,9 +1,8 @@
-import { ArrowLeft, Mail, Calendar, Activity, Star, FileText, Heart, Ban, RotateCcw, CreditCard } from "lucide-react"
+import { ArrowLeft, Mail, Calendar, Activity, Star, FileText, Heart, Ban, RotateCcw, CreditCard, Send, Bell } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { Separator } from "../ui/separator"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { useGetUserDetailsQuery } from "../../redux/features/admin/adminManagementApi"
 interface UserDetailProps {
   userId: string
@@ -18,7 +17,6 @@ const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
    } = useGetUserDetailsQuery({id:userId});
 
    const user = data?.data
-   console.log(data)
   // const user = {
   //   id: "1",
   //   name: "John Doe",
@@ -35,12 +33,12 @@ const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
   //   totalSpent: "99.99"
   // }
 
-  const recentActivity = [
-    { action: "Created note", item: "Meeting Notes", date: "2024-01-20" },
-    { action: "Added favorite", item: "Project Alpha", date: "2024-01-19" },
-    { action: "Rated item", item: "Design System", date: "2024-01-18" },
-    { action: "Updated profile", item: "Profile Settings", date: "2024-01-17" },
-  ]
+  // const recentActivity = [
+  //   { action: "Created note", item: "Meeting Notes", date: "2024-01-20" },
+  //   { action: "Added favorite", item: "Project Alpha", date: "2024-01-19" },
+  //   { action: "Rated item", item: "Design System", date: "2024-01-18" },
+  //   { action: "Updated profile", item: "Profile Settings", date: "2024-01-17" },
+  // ]
 
   const getStatusBadge = (status:boolean) => {
   
@@ -53,8 +51,8 @@ const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-6">
+      <div className="flex gap-4">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Users
@@ -83,6 +81,10 @@ const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
           <Button variant="outline" size="sm">
             <CreditCard className="h-4 w-4 mr-2" />
             Manage Subscription
+          </Button>
+          <Button onClick={()=>{setActionType("notification")}} variant="outline" size="sm">
+            <Bell className="h-4 w-4 mr-2" />
+            Send Notification
           </Button>
         </div>
       </div>
@@ -189,7 +191,7 @@ const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
       </div>
 
       {/* Recent Activity */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Recent Activity</CardTitle>
         </CardHeader>
@@ -213,7 +215,7 @@ const UserDetail = ({userId, onBack, setActionType }: UserDetailProps) => {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   )
 }

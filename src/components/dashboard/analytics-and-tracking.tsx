@@ -1,13 +1,24 @@
 import { useState, useEffect } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts"
-import { Users, Activity, TrendingUp, Coffee } from 'lucide-react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Users, Activity, TrendingUp, Coffee, LoaderIcon } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
+import { useAdminUserActivityQuery, useAdminUserRetentionQuery } from "../../redux/features/admin/adminAnalytics"
+import { useAdminGetAllCafeQuery } from "../../redux/features/admin/adminCoffeeManagement"
 
 export default function AnalyticsAndTrackingPage() {
-  const [timeRange, setTimeRange] = useState("7d")
+  const {data:userActivity,isFetching:isUserActivityFeching} = useAdminUserActivityQuery(undefined);
+  const {data:activeCafe,isFetching:isActiveCafeFetching} = useAdminGetAllCafeQuery(undefined)
 
+const cohortDate = new Date().toDateString();
+
+const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
+  cohortDate,
+  retentionDay: 30,
+});
+  
+  // console.log(userRetentions)
+  
   const userStats = [
     { name: "Mon", activeUsers: 1200, newUsers: 45, coffeeShops: 23 },
     { name: "Tue", activeUsers: 1350, newUsers: 52, coffeeShops: 25 },
@@ -17,7 +28,7 @@ export default function AnalyticsAndTrackingPage() {
     { name: "Sat", activeUsers: 1520, newUsers: 78, coffeeShops: 30 },
     { name: "Sun", activeUsers: 1650, newUsers: 89, coffeeShops: 32 },
   ]
-
+  
   const retentionData = [
     { period: "Day 1", retention: 100 },
     { period: "Day 7", retention: 65 },
@@ -26,7 +37,7 @@ export default function AnalyticsAndTrackingPage() {
     { period: "Day 60", retention: 28 },
     { period: "Day 90", retention: 25 },
   ]
-
+  
   const featureUsage = [
     { name: "Coffee Discovery", value: 35, color: "#8884d8" },
     { name: "Shop Reviews", value: 25, color: "#82ca9d" },
@@ -34,7 +45,11 @@ export default function AnalyticsAndTrackingPage() {
     { name: "Loyalty Program", value: 15, color: "#ff7300" },
     { name: "Social Features", value: 5, color: "#00ff00" },
   ]
-
+  
+  if(isUserActivityFeching || isActiveCafeFetching || isLoading){
+    return <LoaderIcon/>
+  }
+  
   return (
     <div className="space-y-6 p-4">
       <div className="flex justify-between items-center">
@@ -42,7 +57,7 @@ export default function AnalyticsAndTrackingPage() {
           <h1 className="text-3xl font-bold">Analytics & Usage Tracking</h1>
           <p className="text-muted-foreground">Monitor user engagement, retention, and feature usage</p>
         </div>
-        <Select value={timeRange} onValueChange={setTimeRange}>
+        {/* <Select value={timeRange} onValueChange={setTimeRange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select time range" />
           </SelectTrigger>
@@ -52,7 +67,7 @@ export default function AnalyticsAndTrackingPage() {
             <SelectItem value="90d">Last 90 days</SelectItem>
             <SelectItem value="1y">Last year</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
       </div>
 
       {/* Key Metrics Cards */}
@@ -63,10 +78,10 @@ export default function AnalyticsAndTrackingPage() {
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2,847</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">{userActivity?.data?.daily?.count}</div>
+            {/* <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+12%</span> from yesterday
-            </p>
+            </p> */}
           </CardContent>
         </Card>
         <Card>
@@ -75,10 +90,10 @@ export default function AnalyticsAndTrackingPage() {
             <Activity className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24,567</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">{userActivity?.data?.monthly?.count}</div>
+            {/* <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+15%</span> from last month
-            </p>
+            </p> */}
           </CardContent>
         </Card>
         <Card>
@@ -87,10 +102,10 @@ export default function AnalyticsAndTrackingPage() {
             <TrendingUp className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">68%</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">{userRetention?.data?.retainedUsers}</div>
+            {/* <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+3%</span> 7-day retention
-            </p>
+            </p> */}
           </CardContent>
         </Card>
         <Card>
@@ -99,10 +114,10 @@ export default function AnalyticsAndTrackingPage() {
             <Coffee className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">156</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">{activeCafe?.data?.length}</div>
+            {/* <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+8</span> new this week
-            </p>
+            </p> */}
           </CardContent>
         </Card>
       </div>
