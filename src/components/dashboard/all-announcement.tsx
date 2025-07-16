@@ -20,9 +20,12 @@ import { Textarea } from "../ui/textarea"
 import { Label } from "../ui/label"
 import { Trash2, Edit, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { useAdminGetAllAnnouncementsQuery, useDeleteAnnouncementMutation, useUpdateAnnouncementMutation } from "../../redux/features/admin/adminNotification"
+import { toast } from "sonner"
 
 const AnnouncementsList =() => {
   const [currentPage, setCurrentPage] = useState(0)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeletedDialogOpen,setIsDeletedDialogOpen] = useState(false)
   const [limit] = useState(10)
   type EditFormType = {
     title?: string
@@ -42,48 +45,47 @@ const AnnouncementsList =() => {
   const [deleteAnnouncement, { isLoading: isDeleting }] = useDeleteAnnouncementMutation()
   const [updateAnnouncement, { isLoading: isUpdating }] = useUpdateAnnouncementMutation()
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteAnnouncement(id).unwrap()
-    //   toast({
-    //     title: "Success",
-    //     description: "Announcement deleted successfully",
-    //   })
-    } catch (error) {
-    //   toast({
-    //     title: "Error",
-    //     description: "Failed to delete announcement",
-    //     variant: "destructive",
-    //   })
-    }
+ const handleDelete = async (id: string) => {
+  try {
+    await deleteAnnouncement(id).unwrap()
+
+    toast.success("Announcement deleted successfully", {
+      description: "The announcement has been removed.",
+    })
+
+    setIsDeletedDialogOpen(false)
+  } catch (error) {
+    toast.error("Failed to delete announcement", {
+      description: "Please try again.",
+    })
   }
+}
 
   const handleUpdate = async () => {
-    if (!editingAnnouncement) return
+  if (!editingAnnouncement) return
 
-    try {
-      await updateAnnouncement({
-        id: editingAnnouncement.id,
-        data: editForm,
-      }).unwrap()
+  try {
+    await updateAnnouncement({
+      id: editingAnnouncement.id,
+      data: editForm,
+    }).unwrap()
 
-    //   toast({
-    //     title: "Success",
-    //     description: "Announcement updated successfully",
-    //   })
+    toast.success("Announcement updated successfully", {
+      description: "Your changes have been saved.",
+    })
+    setIsEditDialogOpen(false)
 
-      setEditingAnnouncement(null)
-      setEditForm({})
-    } catch (error) {
-    //   toast({
-    //     title: "Error",
-    //     description: "Failed to update announcement",
-    //     variant: "destructive",
-    //   })
-    }
+    setEditingAnnouncement(null)
+    setEditForm({})
+  } catch (error) {
+    toast.error("Failed to update announcement", {
+      description: "Please try again.",
+    })
   }
+}
 
   const openEditDialog = (announcement: any) => {
+    setIsEditDialogOpen(true)
     setEditingAnnouncement(announcement)
     setEditForm({
       title: announcement.title,
@@ -131,7 +133,7 @@ const AnnouncementsList =() => {
                 <div className="flex items-center gap-2">
                   {index === 0 && currentPage === 0 && <Badge className="bg-blue-600 hover:bg-blue-700">Latest</Badge>}
 
-                  <Dialog>
+                  <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="sm" onClick={() => openEditDialog(announcement)}>
                         <Edit className="h-4 w-4" />
@@ -209,7 +211,7 @@ const AnnouncementsList =() => {
                     </DialogContent>
                   </Dialog>
 
-                  <AlertDialog>
+                  <AlertDialog open={isDeletedDialogOpen} onOpenChange={setIsDeletedDialogOpen}>
                     <AlertDialogTrigger asChild>
                       <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300">
                         <Trash2 className="h-4 w-4" />
