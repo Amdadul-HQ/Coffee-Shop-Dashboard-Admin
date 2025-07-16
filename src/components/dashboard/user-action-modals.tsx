@@ -105,8 +105,8 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
       const res = await resetPassword({id:user.id})
       if(res?.data?.success){
       toast.success(`${user.name} Password Reset Successfull`)
+      onClose()
     }
-    onClose()
     }
   }
 
@@ -130,7 +130,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
       toast.loading("Notification Sending")  
     }
     
-    if(isSuccess){
+    if(res.success){
       toast.success("Notification sent successfully!");
       reset();
       onClose();

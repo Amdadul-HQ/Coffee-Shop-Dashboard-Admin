@@ -1,4 +1,4 @@
-import { Users, Shield, Settings, Store, ChartNoAxesCombined } from "lucide-react"
+import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -38,6 +38,12 @@ const AdminSidebar =() => {
       icon : Store,
       view: "coffee" as const,
       path: "coffee-shop-management"
+    },
+    {
+      title:"Announcement",
+      icon : Megaphone,
+      view: "coffee" as const,
+      path: "announcement"
     }
   ]
 

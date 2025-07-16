@@ -9,6 +9,7 @@ import ErrorPage from "../pages/error/errorPage";
 import AnalyticsDashboard from "../components/dashboard/analytics-and-tracking";
 import ProtectedRoute from "./private/privateRoutes";
 import AccoutSuspend from "../pages/error/accoutSuspended";
+import AnnouncementPage from "../components/dashboard/announcement";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
         {
             path:'coffee-shop-management',
             element:<CoffeeShopManagement/>
+        },
+        {
+            path:'announcement',
+            element:<AnnouncementPage/>
         }
     ]
     },
