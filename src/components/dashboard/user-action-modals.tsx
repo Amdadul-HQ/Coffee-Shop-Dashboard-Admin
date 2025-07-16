@@ -318,7 +318,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit">Send Notification</Button>
+        <Button type="submit">{isLoading ? "Sending..." : "Send Notification"}</Button>
       </DialogFooter>
     </form>
   </DialogContent>
@@ -330,6 +330,4 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
 export default UserActionModals;
 
-function onSend(data: { title: string; message: string }) {
-  throw new Error("Function not implemented.")
-}
+
