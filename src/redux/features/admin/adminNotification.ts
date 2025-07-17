@@ -112,7 +112,28 @@ const adminNotification =  baseApi.injectEndpoints({
       }),
       invalidatesTags: ["notes"],
     }),
+    updateNote:builder.mutation({
+      query:({id,data}) => ({
+        url:`/admin/user-note/${id}`,
+        method:"PATCH",
+        body:{note:data}
+      }),
+      invalidatesTags:['notes']
+    }),
+    getNote:builder.query({
+      query:(id)=> ({
+        url:`/admin/user-note/note/${id}`,
+        method:"GET",
+      })
+    }),
+    deleteNote:builder.mutation({
+      query:(id)=> ({
+        url:`/admin/user-note/${id}`,
+        method:"DELETE"
+      }),
+      invalidatesTags:["notes"]
+    })
   })
 })
 
-export const {useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification

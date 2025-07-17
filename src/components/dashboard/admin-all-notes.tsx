@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
@@ -5,14 +7,34 @@ import { Card, CardContent } from "../ui/card"
 import { Input } from "../ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Skeleton } from "../ui/skeleton"
-import { ChevronLeft, ChevronRight, Search, User, Calendar, FileText, Shield } from "lucide-react"
-import { useGetAllNotesQuery } from "../../redux/features/admin/adminNotification"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  User,
+  Calendar,
+  FileText,
+  Shield,
+  MoreVertical,
+  Eye,
+  Edit,
+  Trash2,
+} from "lucide-react"
+import { useGetAllNotesQuery, useDeleteNoteMutation } from "../../redux/features/admin/adminNotification"
+import { toast } from "sonner" // or your preferred toast library
+import NoteDetailsDialog from "./note-details"
+import EditNoteDialog from "./notes-edit"
+import DeleteConfirmDialog from "./notes-delete"
 
-
-const UserAdminNotesList=()=> {
+const UserAdminNotesList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [pageSize] = useState(10)
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
+  const [viewDialogOpen, setViewDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const offset = (currentPage - 1) * pageSize
   const { data, isLoading, error } = useGetAllNotesQuery({
@@ -20,7 +42,8 @@ const UserAdminNotesList=()=> {
     offset: offset,
   })
 
-  console.log(data?.data)
+  const [deleteNote, { isLoading: isDeleting }] = useDeleteNoteMutation()
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -40,16 +63,44 @@ const UserAdminNotesList=()=> {
       ?.toUpperCase()
   }
 
-//   const filteredNotes =
-//     data?.notes?.filter(
-//       (note) =>
-//         note.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         note.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         note.note.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         note.admin.name.toLowerCase().includes(searchTerm.toLowerCase()),
-//     ) || []
+  const filteredNotes =
+    data?.data?.filter(
+      (note: any) =>
+        note?.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        note?.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        note?.user_admin_notes?.note?.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) || []
 
   const totalPages = Math.ceil((data?.total || 0) / pageSize)
+
+  const handleViewNote = (noteId: string) => {
+    setSelectedNoteId(noteId)
+    setViewDialogOpen(true)
+  }
+
+  const handleEditNote = (noteId: string) => {
+    setSelectedNoteId(noteId)
+    setEditDialogOpen(true)
+  }
+
+  const handleDeleteNote = (noteId: string) => {
+    setSelectedNoteId(noteId)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!selectedNoteId) return
+
+    try {
+      await deleteNote(selectedNoteId).unwrap()
+      toast.success("Note deleted successfully")
+      setDeleteDialogOpen(false)
+      setSelectedNoteId(null)
+    } catch (error) {
+      toast.error("Failed to delete note")
+      console.error("Delete error:", error)
+    }
+  }
 
   if (error) {
     return (
@@ -119,7 +170,7 @@ const UserAdminNotesList=()=> {
               </CardContent>
             </Card>
           ))
-        ) : data?.data?.length === 0 ? (
+        ) : filteredNotes.length === 0 ? (
           <Card>
             <CardContent className="flex items-center justify-center h-64">
               <div className="text-center">
@@ -132,7 +183,7 @@ const UserAdminNotesList=()=> {
             </CardContent>
           </Card>
         ) : (
-          data?.data?.map((note:any) => (
+          filteredNotes.map((note: any) => (
             <Card key={note.id} className="hover:shadow-md transition-shadow">
               <CardContent className="pt-6">
                 <div className="space-y-4">
@@ -150,15 +201,53 @@ const UserAdminNotesList=()=> {
                         <p className="text-sm text-muted-foreground">{note?.user?.email}</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(note?.user_admin_notes?.createdAt)}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(note?.user_admin_notes?.createdAt)}
+                      </Badge>
+
+                      {/* Actions Dropdown */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleViewNote(note?.user_admin_notes?.id)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditNote(note?.user_admin_notes?.id)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Note
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteNote(note?.user_admin_notes?.id)}
+                            className="text-red-600 focus:text-red-600"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Note
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
 
-                  {/* Note Content */}
+                  {/* Note Content Preview */}
                   <div className="bg-muted/50 rounded-lg p-4">
-                    <p className="text-sm leading-relaxed">{note?.user_admin_notes?.note}</p>
+                    <p className="text-sm leading-relaxed line-clamp-3">{note?.user_admin_notes?.note}</p>
+                    {note?.user_admin_notes?.note?.length > 150 && (
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="p-0 h-auto mt-2"
+                        onClick={() => handleViewNote(note.id)}
+                      >
+                        Read more...
+                      </Button>
+                    )}
                   </div>
 
                   {/* Admin Info */}
@@ -169,9 +258,13 @@ const UserAdminNotesList=()=> {
                       <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
                           <AvatarImage src={note?.admin?.avatar || "/placeholder.svg"} alt={note?.admin?.name} />
-                          <AvatarFallback className="text-xs">{getInitials(note?.admin?.name)}</AvatarFallback>
+                          <AvatarFallback className="text-xs">
+                            {getInitials(note?.admin?.name || "Admin")}
+                          </AvatarFallback>
                         </Avatar>
-                        <span className="font-medium text-foreground">{note?.user_admin_notes?.adminId}</span>
+                        <span className="font-medium text-foreground">
+                          {note?.admin?.name || `Admin ID: ${note?.user_admin_notes?.adminId}`}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -243,8 +336,20 @@ const UserAdminNotesList=()=> {
           </CardContent>
         </Card>
       )}
+
+      {/* Dialogs */}
+      <NoteDetailsDialog noteId={selectedNoteId} open={viewDialogOpen} onOpenChange={setViewDialogOpen} />
+
+      <EditNoteDialog noteId={selectedNoteId} open={editDialogOpen} onOpenChange={setEditDialogOpen} />
+
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   )
 }
-export default UserAdminNotesList
 
+export default UserAdminNotesList
