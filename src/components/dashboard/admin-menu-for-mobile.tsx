@@ -1,6 +1,6 @@
 import { useState } from "react"
 import {  motion } from "motion/react"
-import { User, Shield, Coffee, LayoutDashboard } from "lucide-react"
+import { User, Shield, Coffee, LayoutDashboard, Bell } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Link } from "react-router-dom"
 
@@ -8,6 +8,7 @@ const tabs = [
   { name: "User Management", icon: User, path:"user-management" },
   { name: "Analytics", icon: LayoutDashboard, path:"analytics-and-tracking" },
   { name: "Coffee Shop Management", icon: Coffee, path:"coffee-shop-management" },
+  { name:"Notifications", icon: Bell,path: "notifications" },
 ]
 
 const MobileNavbar =()=> {

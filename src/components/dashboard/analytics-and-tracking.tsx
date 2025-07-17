@@ -71,7 +71,7 @@ const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Daily Active Users</CardTitle>
@@ -124,12 +124,14 @@ const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
 
       {/* Analytics Tabs */}
       <Tabs defaultValue="users" className="space-y-4">
-        <TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="text-xs">
           <TabsTrigger value="users">User Analytics</TabsTrigger>
           <TabsTrigger value="retention">Retention & Churn</TabsTrigger>
           <TabsTrigger value="features">Feature Usage</TabsTrigger>
           <TabsTrigger value="growth">Growth Tracking</TabsTrigger>
         </TabsList>
+        </div>
 
         <TabsContent value="users" className="space-y-4">
           <Card>

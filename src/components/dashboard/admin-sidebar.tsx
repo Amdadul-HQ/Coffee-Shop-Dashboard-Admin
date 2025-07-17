@@ -1,4 +1,4 @@
-import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone } from "lucide-react"
+import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone, Bell } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -39,6 +39,12 @@ const AdminSidebar =() => {
     //   view: "paywall" as const,
     //   path: "paywall-control"
     // },
+    {
+      title:"Notifications",
+      icon: Bell,
+      view: "notifications" as const,
+      path: "notifications"
+    },
     {
       title:"Coffee Shop Management",
       icon : Store,
