@@ -174,9 +174,31 @@ const adminNotification =  baseApi.injectEndpoints({
     query:(id)=>({
       url: `/stripe/get-a-customer/${id}`,
       method:"GET"
-    })
-    })
+    }),
+  }),
+  adminGetAllIdBan:builder.query<any, { skip?: number; take?: number,ip?:string }>({
+    query:({ skip = 0, take = 10,ip='' } = {})=> ({
+      url:'/admin/ip-ban',
+      method:"GET",
+      params:{skip,take,ip}
+    }),
+    providesTags:["ip"]
+}),
+adminGetBanIpDetails:builder.query({
+    query:(id)=>({
+      url: `/admin/ip-ban/${id}`,
+      method:"GET"
+    }),
+  }),
+  createBanIp:builder.mutation({
+    query:(data)=>({
+      url:`/admin/ip-ban`,
+      method:"POST",
+      body:data
+    }),
+    invalidatesTags:["ip"]
+  })
   })
 })
 
-export const {useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useCreateBanIpMutation,useAdminGetBanIpDetailsQuery,useAdminGetAllIdBanQuery,useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
