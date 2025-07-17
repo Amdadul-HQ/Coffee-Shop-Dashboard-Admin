@@ -35,7 +35,7 @@ interface StripeProduct {
 }
 
 const StripeProductsList = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
@@ -58,13 +58,6 @@ const StripeProductsList = () => {
     })
   }
 
-  const formatUnixTimestamp = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
 
   const parseFeatures = (features: string) => {
     try {

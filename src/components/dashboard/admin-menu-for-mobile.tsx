@@ -1,6 +1,6 @@
 import { useState } from "react"
 import {  motion } from "motion/react"
-import { User, Shield, Coffee, LayoutDashboard, Bell } from "lucide-react"
+import { User, Coffee, LayoutDashboard, Bell } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Link } from "react-router-dom"
 

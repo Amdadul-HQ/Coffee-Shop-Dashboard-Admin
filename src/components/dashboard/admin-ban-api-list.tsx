@@ -37,7 +37,7 @@ interface BanEntity {
 }
 
 const BanManagementList = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedBanId, setSelectedBanId] = useState<string | null>(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)

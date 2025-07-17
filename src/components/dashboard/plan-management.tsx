@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
@@ -9,7 +7,6 @@ import { Skeleton } from "../ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Search, Eye, MoreVertical, DollarSign, CreditCard, CheckCircle, XCircle, RefreshCw } from "lucide-react"
-import { toast } from "sonner"
 import { useAllPlanQuery } from "../../redux/features/admin/adminNotification"
 import PlanDetailsDialog from "./plan-details"
 
@@ -49,7 +46,7 @@ interface StripePlan {
 }
 
 const StripePlansList = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
@@ -83,14 +80,6 @@ const StripePlansList = () => {
     })
   }
 
-  const formatUnixTimestamp = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
-
   const parseMetadata = (metadata: string) => {
     try {
       if (typeof metadata === "string") {
@@ -110,19 +99,6 @@ const StripePlansList = () => {
   const handleViewDetails = (planId: string) => {
     setSelectedPlanId(planId)
     setDetailsDialogOpen(true)
-  }
-
-  const handleToggleStatus = async (planId: string, currentStatus: boolean) => {
-    // try {
-    //   await togglePlanStatus({
-    //     id: planId,
-    //     active: !currentStatus,
-    //   }).unwrap()
-    //   toast.success(`Plan ${!currentStatus ? "activated" : "deactivated"} successfully`)
-    // } catch (error) {
-    //   toast.error("Failed to update plan status")
-    //   console.error("Toggle status error:", error)
-    // }
   }
 
   const filterPlans = (plans: Plan[]) => {
@@ -272,8 +248,6 @@ const StripePlansList = () => {
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => handleToggleStatus(plan.id, plan.active)}
-                            // disabled={isToggling}
                           >
                             {plan.active ? (
                               <XCircle className="h-4 w-4 mr-2" />

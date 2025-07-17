@@ -28,9 +28,7 @@ export default function ProductDetailsDialog({
   const stripeProduct = stripeProducts.find((product) => product.id === stripeProductId)
 
   const {
-    data: productDetails,
     isLoading: isLoadingDetails,
-    error: detailsError,
   } = useGetProductQuery(stripeProductId!, {
     skip: !stripeProductId || !open,
   })

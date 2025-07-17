@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts"
 import { Users, Activity, TrendingUp, Coffee, LoaderIcon } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
@@ -14,7 +14,7 @@ export default function AnalyticsAndTrackingPage() {
 
 const cohortDate = new Date().toDateString();
 
-const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
+const { isLoading } = useAdminUserRetentionQuery({
   cohortDate,
   retentionDay: 30,
 });

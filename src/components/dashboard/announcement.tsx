@@ -23,11 +23,6 @@ interface AnnouncementData {
   endsAt: string
 }
 
-interface Announcement extends AnnouncementData {
-  id: string
-  createdAt: string
-  author: string
-}
 
 
 

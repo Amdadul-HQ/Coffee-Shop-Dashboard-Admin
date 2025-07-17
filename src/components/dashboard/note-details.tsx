@@ -30,13 +30,7 @@ export default function NoteDetailsDialog({ noteId, open, onOpenChange }: NoteDe
     })
   }
 
-  const getInitials = (name: string) => {
-    return name
-      ?.split(" ")
-      ?.map((n) => n[0])
-      ?.join("")
-      ?.toUpperCase()
-  }
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -23,7 +23,6 @@ import {
   UserCheck,
   CreditCard,
 } from "lucide-react"
-import { toast } from "sonner"
 import CustomerDetailsDialog from "./customer-details"
 import { useGetAllCustomerQuery } from "../../redux/features/admin/adminNotification"
 
@@ -59,7 +58,7 @@ interface StripeCustomer {
 }
 
 const StripeCustomersList = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
@@ -84,13 +83,6 @@ const StripeCustomersList = () => {
     })
   }
 
-  const formatUnixTimestamp = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
 
   const getInitials = (name: string) => {
     return name
@@ -117,18 +109,6 @@ const StripeCustomersList = () => {
     setDetailsDialogOpen(true)
   }
 
-  const handleToggleSuspension = async (customerId: string, currentStatus: boolean) => {
-    try {
-    //   await toggleSuspension({
-    //     id: customerId,
-    //     suspend: !currentStatus,
-    //   }).unwrap()
-      toast.success(`Customer ${!currentStatus ? "suspended" : "unsuspended"} successfully`)
-    } catch (error) {
-      toast.error("Failed to update customer status")
-      console.error("Toggle suspension error:", error)
-    }
-  }
 
   const filterCustomers = (customers: Customer[]) => {
     return customers.filter((customer) => {
@@ -288,7 +268,6 @@ const StripeCustomersList = () => {
                           View Details
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleToggleSuspension(customer.id, customer.isSuspend)}
                         //   disabled={isToggling}
                         >
                           {customer.isSuspend ? (

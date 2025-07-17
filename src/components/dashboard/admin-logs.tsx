@@ -25,7 +25,7 @@ interface AdminLog {
 }
 
 const AdminAuditLogsList = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)

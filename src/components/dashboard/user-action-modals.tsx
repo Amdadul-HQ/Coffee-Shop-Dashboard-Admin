@@ -368,7 +368,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
           <FormField
             control={control}
             name="title"
-            render={({ field }) => (
+            render={({ }) => (
               <div>
                 <Label htmlFor="title">Title</Label>
                 <Input id="title" {...register("title")} placeholder="Enter title" />
