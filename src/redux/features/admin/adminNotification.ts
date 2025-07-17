@@ -162,8 +162,21 @@ const adminNotification =  baseApi.injectEndpoints({
         url:`/stripe/get-a-product/${id}`,
         method:"GET"
       })
+    }),
+    getAllCustomer: builder.query<any, { skip?: number; take?: number }>({
+      query: ({ skip = 0, take = 10 } = {}) => ({
+        url:'/stripe/get-all-customers',
+        method:"GET",
+        params: {skip,take}
+      })
+    }),
+    getCustomerDetails:builder.query({
+    query:(id)=>({
+      url: `/stripe/get-a-customer/${id}`,
+      method:"GET"
+    })
     })
   })
 })
 
-export const {useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification

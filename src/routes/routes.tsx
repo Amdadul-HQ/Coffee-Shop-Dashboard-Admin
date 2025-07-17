@@ -16,6 +16,7 @@ import AddNoteDialog from "../components/dashboard/admin-all-notes";
 import UserAdminNotesList from "../components/dashboard/admin-all-notes";
 import StripePlansList from "../components/dashboard/plan-management";
 import StripeProductsList from "../components/dashboard/admin-all-product";
+import StripeCustomersList from "../components/dashboard/admin-customer-list";
 
 const router = createBrowserRouter([
     {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
         {
             path:'products',
             element:<StripeProductsList/>
+        },
+        {
+            path:'customer',
+            element:<StripeCustomersList/>
         }
     ]
     },
