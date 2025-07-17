@@ -338,7 +338,10 @@ const UserAdminNotesList = () => {
       )}
 
       {/* Dialogs */}
-      <NoteDetailsDialog noteId={selectedNoteId} open={viewDialogOpen} onOpenChange={setViewDialogOpen} />
+      {
+        selectedNoteId && <NoteDetailsDialog noteId={selectedNoteId} open={viewDialogOpen} onOpenChange={setViewDialogOpen} />
+      }
+      
 
       <EditNoteDialog noteId={selectedNoteId} open={editDialogOpen} onOpenChange={setEditDialogOpen} />
 

@@ -15,8 +15,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog"
-import { Trash2, ChevronLeft, ChevronRight, Loader2, Bell, Calendar, Users, Trash } from "lucide-react"
+import { Trash2, ChevronLeft, ChevronRight, Loader2, Bell, Calendar, Users, Trash, User } from "lucide-react"
 import { useAdminGetAllNotificationsQuery, useDeleteNotificationMutation } from "../../redux/features/admin/adminNotification"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 const NotificationsList=()=> {
   const [currentPage, setCurrentPage] = useState(0)
@@ -120,9 +121,9 @@ const NotificationsList=()=> {
       </div>
     )
   }
-
+  console.log(notificationsData)
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -132,14 +133,14 @@ const NotificationsList=()=> {
             <p className="text-gray-400">Manage your push notifications</p>
           </div>
         </div>
-        <div className="text-sm text-gray-400">Total: {notificationsData?.total || 0} notifications</div>
+        <div className="text-sm text-gray-400">Total: {notificationsData?.data?.length || 0} notifications</div>
       </div>
 
       {/* Bulk Actions */}
-      {notificationsData && notificationsData?.data?.length > 0 && (
+      {/* {notificationsData && notificationsData?.data?.length > 0 && (
         <div className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg p-4">
           <div className="flex items-center gap-4">
-            {/* <Checkbox
+            <Checkbox
               checked={allSelected}
               onCheckedChange={handleSelectAll}
               className="border-gray-600"
@@ -148,7 +149,7 @@ const NotificationsList=()=> {
                   ref.indeterminate = someSelected
                 }
               }}
-            /> */}
+            />
             <span className="text-sm text-gray-300">
               {selectedNotifications.length > 0 ? `${selectedNotifications.length} selected` : "Select all"}
             </span>
@@ -157,11 +158,6 @@ const NotificationsList=()=> {
           {selectedNotifications.length > 0 && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                {/* <Button variant="destructive" size="sm" disabled={isBulkDeleting}>
-                  {isBulkDeleting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                  <Trash className="h-4 w-4 mr-2" />
-                  Delete Selected ({selectedNotifications.length})
-                </Button> */}
               </AlertDialogTrigger>
               <AlertDialogContent className="bg-gray-900 border-gray-800">
                 <AlertDialogHeader>
@@ -175,15 +171,15 @@ const NotificationsList=()=> {
                   <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
                     Cancel
                   </AlertDialogCancel>
-                  {/* <AlertDialogAction onClick={handleBulkDelete} className="bg-red-600 hover:bg-red-700">
+                  <AlertDialogAction onClick={handleBulkDelete} className="bg-red-600 hover:bg-red-700">
                     Delete All
-                  </AlertDialogAction> */}
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           )}
         </div>
-      )}
+      )} */}
 
       {/* Notifications List */}
       <div className="space-y-4">
@@ -192,13 +188,16 @@ const NotificationsList=()=> {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
-                  <Checkbox
+                  {/* <Checkbox
                     checked={selectedNotifications.includes(notification.id)}
                     onCheckedChange={(checked) => handleSelectNotification(notification.id, checked as boolean)}
                     className="border-gray-600 mt-1"
-                  />
+                  /> */}
                   <div className="space-y-1 flex-1">
-                    <CardTitle className="text-white text-xl">{notification.title}</CardTitle>
+                    <CardTitle className="text-white text-xl">{notification?.notification?.title}</CardTitle>
+                    <CardContent className=" px-0">
+                      {notification?.notification?.message}
+                    </CardContent>
                   </div>
                 </div>
 
@@ -233,7 +232,7 @@ const NotificationsList=()=> {
                           Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDelete(notification.id)}
+                          onClick={() => handleDelete(notification?.notification?.id)}
                           disabled={isDeleting}
                           className="bg-red-600 hover:bg-red-700"
                         >
@@ -247,11 +246,11 @@ const NotificationsList=()=> {
               </div>
             </CardHeader>
 
-            <CardContent className="space-y-4">
-              <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{notification.message}</p>
+            <CardContent className="space-y-3">
+              <p className="text-gray-300">{notification.message}</p>
 
               {/* FCM Tokens */}
-              {notification.fcmTokens && notification.fcmTokens.length > 0 && (
+              {/* {notification.fcmTokens && notification.fcmTokens.length > 0 && (
                 <div className="bg-gray-800 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Users className="h-4 w-4 text-blue-400" />
@@ -265,21 +264,22 @@ const NotificationsList=()=> {
                       : `${notification.fcmTokens.length} device tokens`}
                   </div>
                 </div>
-              )}
-
-              {/* Time Range */}
-              {(notification.startsAt || notification.endsAt) && (
-                <div className="border-t border-gray-800 pt-4">
-                  <div className="flex items-center gap-4 text-sm text-gray-400">
-                    <Calendar className="h-4 w-4" />
-                    {notification.startsAt && <span>Starts: {new Date(notification.startsAt).toLocaleString()}</span>}
-                    {notification.endsAt && <span>Ends: {new Date(notification.endsAt).toLocaleString()}</span>}
-                  </div>
-                </div>
-              )}
+              )} */}
+              <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={notification?.user?.avatar || "/placeholder.svg"} alt={notification?.user?.name} />
+                        <AvatarFallback>
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{notification?.user?.name}</p>
+                        <p className="text-sm text-muted-foreground">{notification?.user?.email}</p>
+                      </div>
+                    </div>
 
               {/* Created At */}
-              <div className="text-xs text-gray-500">Created: {new Date(notification.createdAt).toLocaleString()}</div>
+              <div className="text-xs text-gray-500">Created: {new Date(notification?.notification?.createdAt).toLocaleString()}</div>
             </CardContent>
           </Card>
         ))}

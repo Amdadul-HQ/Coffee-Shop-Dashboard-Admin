@@ -1,4 +1,4 @@
-import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone, Bell, NotebookTabs } from "lucide-react"
+import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone, Bell, NotebookTabs, SubscriptIcon, CreditCard } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -38,6 +38,12 @@ const AdminSidebar =() => {
       icon: NotebookTabs,
       view: "notes" as const,
       path: "notes"
+    },
+    {
+      title:"Plan Management",
+      icon: CreditCard,
+      view: "plan" as const,
+      path: "plan"
     },
     // {
     //   title: "Paywall Control",

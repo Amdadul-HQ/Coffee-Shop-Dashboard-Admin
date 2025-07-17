@@ -76,7 +76,8 @@ const adminNotification =  baseApi.injectEndpoints({
             url: '/notification/push',
             method: "GET",
             params: { limit, offset }
-        })
+        }),
+        providesTags:["notifications"]
     }),
     // Get all notifications with pagination
     adminGetAllNotifications: builder.query<NotificationsResponse, PaginationParams>({
@@ -132,8 +133,15 @@ const adminNotification =  baseApi.injectEndpoints({
         method:"DELETE"
       }),
       invalidatesTags:["notes"]
+    }),
+    allPlan :builder.query<any, { skip?: number; take?: number }>({
+      query: ({ skip = 0, take = 10 } = {}) => ({
+        url:"/stripe/get-all-plans",
+        method:"GET",
+        params:{skip,take}
+      })
     })
   })
 })
 
-export const {useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification

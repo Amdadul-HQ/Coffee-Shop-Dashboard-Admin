@@ -14,6 +14,7 @@ import AnnouncementsList from "../components/dashboard/all-announcement";
 import NotificationsList from "../components/dashboard/admin-all-notification";
 import AddNoteDialog from "../components/dashboard/admin-all-notes";
 import UserAdminNotesList from "../components/dashboard/admin-all-notes";
+import StripePlansList from "../components/dashboard/plan-management";
 
 const router = createBrowserRouter([
     {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
         {
             path:'notes',
             element:<UserAdminNotesList/>
+        },
+        {
+            path:'plan',
+            element:<StripePlansList/>
         }
     ]
     },

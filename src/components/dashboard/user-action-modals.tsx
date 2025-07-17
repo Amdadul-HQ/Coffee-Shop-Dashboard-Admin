@@ -135,6 +135,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
      if(isLoading){
       toast.loading("Notification Sending")  
     }
+    console.log(res)
     
     if(res.success){
       toast.success("Notification sent successfully!");
