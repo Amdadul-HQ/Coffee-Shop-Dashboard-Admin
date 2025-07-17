@@ -1,4 +1,4 @@
-import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone, Bell, NotebookTabs, SubscriptIcon, CreditCard } from "lucide-react"
+import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone, Bell, NotebookTabs, SubscriptIcon, CreditCard, ShoppingBasket } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -44,6 +44,12 @@ const AdminSidebar =() => {
       icon: CreditCard,
       view: "plan" as const,
       path: "plan"
+    },
+    {
+      title:"Product Management",
+      icon: ShoppingBasket,
+      view: "product",
+      path: "products"
     },
     // {
     //   title: "Paywall Control",
