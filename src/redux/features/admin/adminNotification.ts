@@ -1,5 +1,29 @@
 import { baseApi } from "../../api/baseApi";
 
+
+export interface Notification {
+  id: string
+  title: string
+  message: string
+  fcmTokens: string[]
+  startsAt?: string | null
+  endsAt?: string | null
+  createdAt: string
+}
+
+export interface NotificationsResponse {
+  notifications: Notification[]
+  total: number
+  limit: number
+  offset: number
+  hasMore: boolean
+}
+
+export interface PaginationParams {
+  limit?: number
+  offset?: number
+}
+
 const adminNotification =  baseApi.injectEndpoints({
     endpoints: (builder) => ({
         adminSendUserNotification :builder.mutation({
@@ -45,7 +69,33 @@ const adminNotification =  baseApi.injectEndpoints({
       }),
       invalidatesTags: ["announcements"],
     }),
-    })
+    // Get all Notification
+    adminGetAllNotification: builder.query<any, { limit?: number; offset?: number }>({
+        query: ({ limit = 10, offset = 0 } = {}) => ({
+            url: '/notification/push',
+            method: "GET",
+            params: { limit, offset }
+        })
+    }),
+    // Get all notifications with pagination
+    adminGetAllNotifications: builder.query<NotificationsResponse, PaginationParams>({
+      query: ({ limit = 10, offset = 0 } = {}) => ({
+        url: "/notification/push",
+        method: "GET",
+        params: { limit, offset },
+      }),
+      providesTags: ["notifications"],
+    }),
+
+    // Delete notification
+    deleteNotification: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/notification/push/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["notifications"],
+    }),
+    }),
 })
 
-export const {useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation} = adminNotification
+export const {useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification

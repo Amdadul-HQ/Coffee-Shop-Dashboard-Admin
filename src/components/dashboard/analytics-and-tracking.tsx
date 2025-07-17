@@ -5,10 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
 import { useAdminUserActivityQuery, useAdminUserRetentionQuery } from "../../redux/features/admin/adminAnalytics"
 import { useAdminGetAllCafeQuery } from "../../redux/features/admin/adminCoffeeManagement"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 export default function AnalyticsAndTrackingPage() {
   const {data:userActivity,isFetching:isUserActivityFeching} = useAdminUserActivityQuery(undefined);
-  const {data:activeCafe,isFetching:isActiveCafeFetching} = useAdminGetAllCafeQuery(undefined)
+  const {data:activeCafe,isFetching:isActiveCafeFetching} = useAdminGetAllCafeQuery(undefined);
+  const [timeRange,setTimeRange] = useState("")
 
 const cohortDate = new Date().toDateString();
 
@@ -49,6 +51,8 @@ const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
   if(isUserActivityFeching || isActiveCafeFetching || isLoading){
     return <LoaderIcon/>
   }
+
+  console.log(timeRange,userActivity.data)
   
   return (
     <div className="space-y-6 p-4">
@@ -57,17 +61,16 @@ const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
           <h1 className="text-3xl font-bold">Analytics & Usage Tracking</h1>
           <p className="text-muted-foreground">Monitor user engagement, retention, and feature usage</p>
         </div>
-        {/* <Select value={timeRange} onValueChange={setTimeRange}>
+        <Select value={timeRange} onValueChange={setTimeRange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select time range" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="7d">Last 7 days</SelectItem>
-            <SelectItem value="30d">Last 30 days</SelectItem>
-            <SelectItem value="90d">Last 90 days</SelectItem>
-            <SelectItem value="1y">Last year</SelectItem>
+            <SelectItem value="1d">Last 1 days</SelectItem>
+            <SelectItem value="7d">Last 30 days</SelectItem>
+            <SelectItem value="30d">Last 90 days</SelectItem>
           </SelectContent>
-        </Select> */}
+        </Select>
       </div>
 
       {/* Key Metrics Cards */}
@@ -78,10 +81,10 @@ const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userActivity?.data?.daily?.count}</div>
-            {/* <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">+12%</span> from yesterday
-            </p> */}
+            <div className="text-2xl font-bold">{userActivity?.data?.['1d']?.active}</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-red-600">{userActivity?.data?.['1d']?.inactive}</span> Inactive User
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -90,19 +93,19 @@ const { data: userRetention, isLoading } = useAdminUserRetentionQuery({
             <Activity className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userActivity?.data?.monthly?.count}</div>
-            {/* <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">+15%</span> from last month
-            </p> */}
+            <div className="text-2xl font-bold">{userActivity?.data?.['30d']?.active}</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-red-600">{userActivity?.data?.['30d']?.inactive}</span> Inactive User
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">User Retention</CardTitle>
+            <CardTitle className="text-sm font-medium">User Ratio</CardTitle>
             <TrendingUp className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userRetention?.data?.retainedUsers}</div>
+            <div className="text-2xl font-bold">{timeRange === '1d' ? userActivity?.data?.['1d']?.ratio : timeRange === '7d' ? userActivity?.data?.['7d']?.ratio : userActivity?.data?.['30d']?.ratio}</div>
             {/* <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+3%</span> 7-day retention
             </p> */}

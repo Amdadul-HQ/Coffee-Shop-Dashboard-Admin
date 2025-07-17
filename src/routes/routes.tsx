@@ -11,6 +11,7 @@ import ProtectedRoute from "./private/privateRoutes";
 import AccoutSuspend from "../pages/error/accoutSuspended";
 import AnnouncementPage from "../components/dashboard/announcement";
 import AnnouncementsList from "../components/dashboard/all-announcement";
+import NotificationsList from "../components/dashboard/admin-all-notification";
 
 const router = createBrowserRouter([
     {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
         {
             path:'all-announcement',
             element:<AnnouncementsList/>
+        },
+        {
+            path:'all-notification',
+            element:<NotificationsList/>
         }
     ]
     },
