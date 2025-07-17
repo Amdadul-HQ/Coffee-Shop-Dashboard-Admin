@@ -3,7 +3,6 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
-import { Checkbox } from "../ui/checkbox"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,14 +14,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog"
-import { Trash2, ChevronLeft, ChevronRight, Loader2, Bell, Calendar, Users, Trash, User } from "lucide-react"
+import { Trash2, ChevronLeft, ChevronRight, Loader2, Bell, User } from "lucide-react"
 import { useAdminGetAllNotificationsQuery, useDeleteNotificationMutation } from "../../redux/features/admin/adminNotification"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 const NotificationsList=()=> {
   const [currentPage, setCurrentPage] = useState(0)
   const [limit] = useState(10)
-  const [selectedNotifications, setSelectedNotifications] = useState<string[]>([])
 //   const { toast } = useToast()
 
   const offset = currentPage * limit
@@ -75,13 +73,7 @@ const NotificationsList=()=> {
 //     }
 //   }
 
-  const handleSelectNotification = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedNotifications((prev) => [...prev, id])
-    } else {
-      setSelectedNotifications((prev) => prev.filter((nId) => nId !== id))
-    }
-  }
+
 
 //   const isNotificationActive = (notification: Notification) => {
 //     const now = new Date()

@@ -1,4 +1,4 @@
-import { ArrowLeft, Mail, Calendar, Activity, Star, FileText, Heart, Ban, RotateCcw, CreditCard, Send, Bell } from "lucide-react"
+import { ArrowLeft, Mail, Calendar, Activity, Star, FileText, Heart, Ban, RotateCcw, CreditCard, Bell } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"

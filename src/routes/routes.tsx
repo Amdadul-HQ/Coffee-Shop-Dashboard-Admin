@@ -12,7 +12,6 @@ import AccoutSuspend from "../pages/error/accoutSuspended";
 import AnnouncementPage from "../components/dashboard/announcement";
 import AnnouncementsList from "../components/dashboard/all-announcement";
 import NotificationsList from "../components/dashboard/admin-all-notification";
-import AddNoteDialog from "../components/dashboard/admin-all-notes";
 import UserAdminNotesList from "../components/dashboard/admin-all-notes";
 import StripePlansList from "../components/dashboard/plan-management";
 import StripeProductsList from "../components/dashboard/admin-all-product";

@@ -12,7 +12,7 @@ import {
 } from "../ui/dialog"
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
-import { Plus, Search } from "lucide-react"
+import { Plus } from "lucide-react"
 
 interface AdminUser {
   id: string
@@ -25,8 +25,6 @@ const AddNoteDialog=()=> {
   const [open, setOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
   const [note, setNote] = useState("")
-  const [userSearch, setUserSearch] = useState("")
-  const [isSearching, setIsSearching] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,7 +39,6 @@ const AddNoteDialog=()=> {
     // Reset form and close dialog
     setSelectedUser(null)
     setNote("")
-    setUserSearch("")
     setOpen(false)
   }
 
