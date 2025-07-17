@@ -1,4 +1,3 @@
-"use client"
 
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
@@ -93,12 +92,12 @@ const NotificationsList=()=> {
 //     return true
 //   }
 
-  const totalPages = notificationsData ? Math.ceil(notificationsData.total / limit) : 0
-  const allSelected =
-    selectedNotifications.length === notificationsData?.notifications.length &&
-    notificationsData?.notifications.length > 0
-  const someSelected =
-    selectedNotifications.length > 0 && selectedNotifications.length < (notificationsData?.notifications.length || 0)
+  const totalPages = notificationsData ? Math.ceil(notificationsData?.data?.total / limit) : 0
+  // const allSelected =
+  //   selectedNotifications.length === notificationsData?.data?.length &&
+  //   notificationsData?.notifications.length > 0
+  // const someSelected =
+  //   selectedNotifications?.length > 0 && selectedNotifications.length < (notificationsData?.notifications.length || 0)
 
   if (isLoading) {
     return (
@@ -137,7 +136,7 @@ const NotificationsList=()=> {
       </div>
 
       {/* Bulk Actions */}
-      {notificationsData && notificationsData.notifications.length > 0 && (
+      {notificationsData && notificationsData?.data?.length > 0 && (
         <div className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg p-4">
           <div className="flex items-center gap-4">
             {/* <Checkbox
@@ -188,7 +187,7 @@ const NotificationsList=()=> {
 
       {/* Notifications List */}
       <div className="space-y-4">
-        {notificationsData?.notifications.map((notification, index) => (
+        {notificationsData?.data?.map((notification:any, index:number) => (
           <Card key={notification.id} className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors">
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -344,7 +343,7 @@ const NotificationsList=()=> {
       )}
 
       {/* Empty State */}
-      {notificationsData?.notifications.length === 0 && (
+      {notificationsData?.data?.length === 0 && (
         <div className="text-center py-12">
           <Bell className="h-16 w-16 text-gray-600 mx-auto mb-4" />
           <p className="text-gray-400 text-lg mb-2">No notifications found</p>

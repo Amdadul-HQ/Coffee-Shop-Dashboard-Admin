@@ -53,7 +53,7 @@ const router = createBrowserRouter([
             element:<AnnouncementsList/>
         },
         {
-            path:'all-notification',
+            path:'notifications',
             element:<NotificationsList/>
         }
     ]

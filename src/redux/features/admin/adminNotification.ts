@@ -12,6 +12,7 @@ export interface Notification {
 }
 
 export interface NotificationsResponse {
+  data: any;
   notifications: Notification[]
   total: number
   limit: number
@@ -95,7 +96,15 @@ const adminNotification =  baseApi.injectEndpoints({
       }),
       invalidatesTags: ["notifications"],
     }),
+    getAllNotes :builder.query<any, { limit?: number; offset?: number }>({
+      query: ({ limit = 10, offset = 0 } = {}) => ({
+        url: "/admin/user-note",
+        method: "GET",
+        params: { limit, offset },
+      }),
+      providesTags: ["notes"],
     }),
+  })
 })
 
 export const {useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification

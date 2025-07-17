@@ -1,4 +1,4 @@
-import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone, Bell } from "lucide-react"
+import { Users, Shield, Settings, Store, ChartNoAxesCombined, Mic, Megaphone, Bell, NotebookTabs } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -32,6 +32,12 @@ const AdminSidebar =() => {
       icon: Users,
       view: "users" as const,
       path: "user-management"
+    },
+    {
+      title:"Notes",
+      icon: NotebookTabs,
+      view: "notes" as const,
+      path: "notes"
     },
     // {
     //   title: "Paywall Control",
