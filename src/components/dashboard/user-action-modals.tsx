@@ -18,7 +18,7 @@ import {z} from "zod"
 import { useForm } from "react-hook-form"
 import { FormField } from "../ui/form"
 import { Input } from "../ui/input"
-import { useAdminSendUserNotificationMutation, useSetNotesMutation } from "../../redux/features/admin/adminNotification"
+import { useAdminSendUserNotificationMutation, useSetNotesMutation, useUserBanMutation, useUserUnBanMutation } from "../../redux/features/admin/adminNotification"
 
 interface User {
   id: string;
@@ -58,6 +58,8 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
   const [forceLogout] = useForceLogoutMutation()
   const [resetPassword] = useResetPasswordMutation();
   const [setNotes,{isLoading:isLoadingNotes}] = useSetNotesMutation()
+  const [banUser] = useUserBanMutation()
+  const [unbanUser] = useUserUnBanMutation()
   const [newSubscription,setNewSubscription] = useState("")
   const [sendNotification, { isLoading, isError }] = useAdminSendUserNotificationMutation();
   const {control,
@@ -70,14 +72,14 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
   const handleBan = async () => {
     if(user?.id && actionType === "ban"){
-      const res = await suspendUser({ id: user.id,reason:reason }).unwrap();
+      const res = await banUser(user.id).unwrap();
       if(res?.success){
         toast.success(`${user.name} is Ban Successfully`)
       }
     }
 
     if(user?.id && actionType === "unban") {
-      const res = await unSuspenndUser({ id: user.id }).unwrap();
+      const res = await unbanUser(user.id).unwrap();
       if(res?.success){
         toast.success(`${user.name} is Unbanned Successfully`)
       }

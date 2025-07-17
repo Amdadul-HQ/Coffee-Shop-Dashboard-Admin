@@ -216,7 +216,8 @@ adminGetBanIpDetails:builder.query({
     query:(id)=>({
       url:`/admin/ip-ban/unban/${id}`,
       method:"PATCH"
-    })
+    }),
+    invalidatesTags:["users","ip"]
   })
   })
 })
