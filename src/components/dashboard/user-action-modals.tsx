@@ -18,7 +18,7 @@ import {z} from "zod"
 import { useForm } from "react-hook-form"
 import { FormField } from "../ui/form"
 import { Input } from "../ui/input"
-import { useAdminSendUserNotificationMutation } from "../../redux/features/admin/adminNotification"
+import { useAdminSendUserNotificationMutation, useSetNotesMutation } from "../../redux/features/admin/adminNotification"
 
 interface User {
   id: string;
@@ -34,7 +34,7 @@ interface User {
 }
 
 
-type TActionType = "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | "notification" | null
+type TActionType = "notes" | "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | "notification" | null
 
 
 interface UserActionModalsProps {
@@ -44,8 +44,9 @@ interface UserActionModalsProps {
   setActionType: any
 }
 const notificationSchema = z.object({
-title: z.string().min(1, "Title is required"),
-message: z.string().min(1, "Message is required"),
+  title: z.string().min(1, "Title is required").optional(),
+  message: z.string().min(1, "Message is required").optional(),
+  note: z.string().min(1, "Note is required").optional(),
 });
 type NotificationFormData = z.infer<typeof notificationSchema>;
 
@@ -55,13 +56,18 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
   const [unSuspenndUser] = useUserUnSuspendMutation();
   const [forceLogout] = useForceLogoutMutation()
   const [resetPassword] = useResetPasswordMutation();
+  const [setNotes,{isLoading:isLoadingNotes}] = useSetNotesMutation()
   const [newSubscription,setNewSubscription] = useState("")
-  const [sendNotification, { isLoading, isSuccess, isError }] = useAdminSendUserNotificationMutation();
+  const [sendNotification, { isLoading, isError }] = useAdminSendUserNotificationMutation();
   const {control,
     handleSubmit,
     reset,
     register,
     formState: { errors },} = useForm<NotificationFormData>()
+
+    const handleSubmitNotes = () => {
+      
+    }
 
 
   const handleSuspend = async () => {
@@ -144,6 +150,30 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
     console.error(err);
   }
   };
+
+  const onSubmitNotes = async(data:any) => {
+    try {
+
+    const res = await setNotes({id:user?.id,data:data}).unwrap();
+
+     if(isLoadingNotes){
+      toast.loading("Notification Sending")  
+    }
+    
+    if(res?.success){
+      toast.success("Notification sent successfully!");
+      reset();
+      onClose();
+    }
+    if(isError){
+      toast.error("something went wrong")
+    }
+
+  } catch (err) {
+    toast.error("Failed to send notification");
+    console.error(err);
+  }
+  }
 
   if (!user || !actionType) return null
 
@@ -268,61 +298,115 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
       {/* Subscription Management Modal */}
       <Dialog open={actionType === "notification"} onOpenChange={onClose}>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Send Notification</DialogTitle>
-      <DialogDescription>
-        Send a message to <strong>{user.name}</strong>.
-      </DialogDescription>
-    </DialogHeader>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Send Notification</DialogTitle>
+          <DialogDescription>
+            Send a message to <strong>{user.name}</strong>.
+          </DialogDescription>
+        </DialogHeader>
 
-    {/* ✅ Hook Form Setup */}
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4"
-    >
-      <FormField
-        control={control}
-        name="title"
-        render={({ field }) => (
-          <div>
-            <Label htmlFor="title">Title</Label>
-            <Input id="title" {...register("title")} placeholder="Enter title" />
-            {typeof errors.title?.message === "string" && (
-              <p className="text-sm text-red-500">{errors.title.message}</p>
+        {/* ✅ Hook Form Setup */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
+          <FormField
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <div>
+                <Label htmlFor="title">Title</Label>
+                <Input id="title" {...register("title")} placeholder="Enter title" />
+                {typeof errors.title?.message === "string" && (
+                  <p className="text-sm text-red-500">{errors.title.message}</p>
+                )}
+              </div>
             )}
-          </div>
-        )}
-      />
+          />
 
-      <FormField
-        control={control}
-        name="message"
-        render={({ field }) => (
-          <div>
-            <Label htmlFor="message">Message</Label>
+          <FormField
+            control={control}
+            name="message"
+            render={({ field }) => (
+              <div>
+                <Label htmlFor="message">Message</Label>
+                <Textarea
+                  id="message"
+                  rows={4}
+                  placeholder="Write your message here..."
+                  {...field}
+                />
+                {typeof errors.message?.message === "string" && (
+                  <p className="text-sm text-red-500">{errors.message.message}</p>
+                )}
+              </div>
+            )}
+          />
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">{isLoading ? "Sending..." : "Send Notification"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+
+    {/*  */}
+    <Dialog open={actionType === "notes"} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Add Admin Note</DialogTitle>
+          <DialogDescription>
+            Add an administrative note for a user. This will be visible to other administrators.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmitNotes)} className="space-y-4">
+          
+           <FormField
+            control={control}
+            name="note"
+            render={({ field }) => (
+              <div>
+                <Label htmlFor="note">Message</Label>
+                <Textarea
+                  id="note"
+                  rows={4}
+                  placeholder="Write your message here..."
+                  {...field}
+                />
+                {typeof errors.note?.message === "string" && (
+                  <p className="text-sm text-red-500">{errors.note.message}</p>
+                )}
+              </div>
+            )}
+          />
+          
+          {/* <div className="space-y-2">
+            <Label htmlFor="note">Note</Label>
             <Textarea
-              id="message"
+              id="note"
+              placeholder="Enter your administrative note here..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
               rows={4}
-              placeholder="Write your message here..."
-              {...field}
+              required
             />
-            {typeof errors.message?.message === "string" && (
-              <p className="text-sm text-red-500">{errors.message.message}</p>
-            )}
-          </div>
-        )}
-      />
+          </div> */}
 
-      <DialogFooter>
-        <Button type="button" variant="outline" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button type="submit">{isLoading ? "Sending..." : "Send Notification"}</Button>
-      </DialogFooter>
-    </form>
-  </DialogContent>
-</Dialog>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!user}>
+              Add Note
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
     </>
   )
 }

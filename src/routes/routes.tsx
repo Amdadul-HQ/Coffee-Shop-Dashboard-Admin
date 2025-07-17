@@ -12,6 +12,8 @@ import AccoutSuspend from "../pages/error/accoutSuspended";
 import AnnouncementPage from "../components/dashboard/announcement";
 import AnnouncementsList from "../components/dashboard/all-announcement";
 import NotificationsList from "../components/dashboard/admin-all-notification";
+import AddNoteDialog from "../components/dashboard/admin-all-notes";
+import UserAdminNotesList from "../components/dashboard/admin-all-notes";
 
 const router = createBrowserRouter([
     {
@@ -55,6 +57,10 @@ const router = createBrowserRouter([
         {
             path:'notifications',
             element:<NotificationsList/>
+        },
+        {
+            path:'notes',
+            element:<UserAdminNotesList/>
         }
     ]
     },

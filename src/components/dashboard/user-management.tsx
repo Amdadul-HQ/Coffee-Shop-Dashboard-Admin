@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Search, MoreHorizontal, Eye, Ban, RotateCcw, CreditCard, LogOut } from "lucide-react"
+import { Search, MoreHorizontal, Eye, Ban, RotateCcw, CreditCard, LogOut, NotebookTabs } from "lucide-react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
@@ -24,7 +24,7 @@ interface User {
 }
 
 
-type TActionType = "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
+type TActionType = "notes"| "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
 
 const UserManagement=() => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -213,6 +213,10 @@ const UserManagement=() => {
                           <DropdownMenuItem onClick={() => handleAction(user, "view")}>
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAction(user, "notes")}>
+                            <NotebookTabs className="h-4 w-4 mr-2" />
+                            Set Notes
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleAction(user, user.isSuspend ? "Unsuspend" : "suspend")}>
                             <Ban className="h-4 w-4 mr-2" />

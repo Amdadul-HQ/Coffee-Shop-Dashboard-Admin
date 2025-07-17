@@ -104,7 +104,15 @@ const adminNotification =  baseApi.injectEndpoints({
       }),
       providesTags: ["notes"],
     }),
+    setNotes :builder.mutation({
+      query: ({id, data}) => ({
+        url: `/admin/user-note/${id}`,
+        method: "POST",
+        body: data
+      }),
+      invalidatesTags: ["notes"],
+    }),
   })
 })
 
-export const {useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
