@@ -16,16 +16,16 @@ import { NavLink, useLocation } from "react-router-dom"
 const AdminSidebar =() => {
   const menuItems = [
     {
-      title:"Analytics & Usage Tracking",
-      icon: ChartNoAxesCombined,
-      view: "analytics" as const,
-      path: "analytics-and-tracking"
-    },
-    {
       title:"Announcement",
       icon : Megaphone,
       view: "coffee" as const,
       path: "announcement"
+    },
+    {
+      title:"Analytics & Usage Tracking",
+      icon: ChartNoAxesCombined,
+      view: "analytics" as const,
+      path: "analytics-and-tracking"
     },
     {
       title: "User Management",
@@ -34,10 +34,10 @@ const AdminSidebar =() => {
       path: "user-management"
     },
     {
-      title:"Notes",
-      icon: NotebookTabs,
-      view: "notes" as const,
-      path: "notes"
+      title:"Coffee Shop Management",
+      icon : Store,
+      view: "coffee" as const,
+      path: "coffee-shop-management"
     },
     {
       title:"Plan Management",
@@ -50,6 +50,12 @@ const AdminSidebar =() => {
       icon: ShoppingBasket,
       view: "product",
       path: "products"
+    },
+    {
+      title:"Notes",
+      icon: NotebookTabs,
+      view: "notes" as const,
+      path: "notes"
     },
     {
       title:"Customers",
@@ -80,12 +86,6 @@ const AdminSidebar =() => {
       icon: Bell,
       view: "notifications" as const,
       path: "notifications"
-    },
-    {
-      title:"Coffee Shop Management",
-      icon : Store,
-      view: "coffee" as const,
-      path: "coffee-shop-management"
     },
   ]
 

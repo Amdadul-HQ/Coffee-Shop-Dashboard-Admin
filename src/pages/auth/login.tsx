@@ -37,7 +37,7 @@ export default function LoginForm() {
             });
          // Navigate after short delay (e.g., 2 seconds)
     setTimeout(() => {
-      navigate(`/dashboard/admin/user-management`);
+      navigate(`/dashboard/admin/analytics-and-tracking`);
     }, 2000);
        }
        // eslint-disable-next-line @typescript-eslint/no-unused-vars
