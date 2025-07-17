@@ -197,8 +197,15 @@ adminGetBanIpDetails:builder.query({
       body:data
     }),
     invalidatesTags:["ip"]
+  }),
+  deleteBanIp:builder.mutation({
+    query:(id)=>({
+      url:`/admin/ip-ban/${id}`,
+      method:"DELETE"
+    }),
+    invalidatesTags:["ip"]
   })
   })
 })
 
-export const {useCreateBanIpMutation,useAdminGetBanIpDetailsQuery,useAdminGetAllIdBanQuery,useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useDeleteBanIpMutation,useCreateBanIpMutation,useAdminGetBanIpDetailsQuery,useAdminGetAllIdBanQuery,useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification

@@ -26,7 +26,7 @@ import BanDetailsDialog from "./admin-ban-api-details"
 import CreateBanDialog from "./admin-ban-api-create"
 import DeleteConfirmDialog from "./notes-delete"
 import { toast } from "sonner"
-import { useAdminGetAllIdBanQuery } from "../../redux/features/admin/adminNotification"
+import { useAdminGetAllIdBanQuery, useDeleteBanIpMutation } from "../../redux/features/admin/adminNotification"
 
 interface BanEntity {
   id: string
@@ -52,7 +52,7 @@ const BanManagementList = () => {
     take: pageSize,
   })
 
-//   const [deleteBan, { isLoading: isDeleting }] = useDeleteBanMutation()
+  const [deleteBan, { isLoading: isDeleting }] = useDeleteBanIpMutation()
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -106,7 +106,7 @@ const BanManagementList = () => {
     if (!selectedBanId) return
 
     try {
-    //   await deleteBan(selectedBanId).unwrap()
+      await deleteBan(selectedBanId).unwrap()
       toast.success("Ban removed successfully")
       setDeleteDialogOpen(false)
       setSelectedBanId(null)
@@ -350,14 +350,14 @@ const BanManagementList = () => {
 
       <CreateBanDialog open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
 
-      {/* <DeleteConfirmDialog
+      <DeleteConfirmDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onConfirm={confirmDelete}
         isLoading={isDeleting}
         title="Remove Ban"
         description="Are you sure you want to remove this ban? The IP address will be able to access the system again."
-      /> */}
+      />
     </div>
   )
 }

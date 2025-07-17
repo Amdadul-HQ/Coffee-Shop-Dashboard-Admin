@@ -8,10 +8,12 @@ interface DeleteConfirmDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: () => void
-  isLoading: boolean
+  isLoading: boolean,
+  title?:string,
+  description?:string
 }
 
-export default function DeleteConfirmDialog({ open, onOpenChange, onConfirm, isLoading }: DeleteConfirmDialogProps) {
+export default function DeleteConfirmDialog({ open, onOpenChange, onConfirm, isLoading, title="Delete Note",description="Are you sure you want to delete this administrative note?" }: DeleteConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[400px]">
@@ -21,8 +23,8 @@ export default function DeleteConfirmDialog({ open, onOpenChange, onConfirm, isL
               <AlertTriangle className="h-5 w-5 text-red-600" />
             </div>
             <div>
-              <DialogTitle>Delete Note</DialogTitle>
-              <DialogDescription>Are you sure you want to delete this administrative note?</DialogDescription>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>{description}</DialogDescription>
             </div>
           </div>
         </DialogHeader>
