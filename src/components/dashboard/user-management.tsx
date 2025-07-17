@@ -21,10 +21,11 @@ interface User {
   ratings: number
   notes: number
   favorites: number
+  isIpBan:boolean
 }
 
 
-type TActionType = "notes"| "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
+type TActionType = "ban" | "unban" | "notes"| "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | null
 
 const UserManagement=() => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -218,10 +219,13 @@ const UserManagement=() => {
                             <NotebookTabs className="h-4 w-4 mr-2" />
                             Set Notes
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAction(user, user.isIpBan ? "unban" : "ban")}>
+                            <Ban className="h-4 w-4 mr-2" />
+                            {user.isIpBan=== true ? "Unban" : "Ban"}
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleAction(user, user.isSuspend ? "Unsuspend" : "suspend")}>
                             <Ban className="h-4 w-4 mr-2" />
-                            {user.isSuspend
- === true ? "Unsuspend" : "Suspend"}
+                            {user.isSuspend === true ? "Unsuspend" : "Suspend"}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleAction(user, "reset")}>
                             <RotateCcw className="h-4 w-4 mr-2" />

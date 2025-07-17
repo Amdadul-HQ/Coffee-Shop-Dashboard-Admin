@@ -31,10 +31,11 @@ interface User {
   ratings: number;
   notes: number;
   favorites: number;
+  isIpBan:boolean
 }
 
 
-type TActionType = "notes" | "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | "notification" | null
+type TActionType ="ban"|"unban"| "notes" | "view" | "suspend" | "reset" | "subscription"| "Unsuspend" | "force-logout" | "notification" | null
 
 
 interface UserActionModalsProps {
@@ -65,10 +66,23 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
     register,
     formState: { errors },} = useForm<NotificationFormData>()
 
-    const handleSubmitNotes = () => {
-      
+
+
+  const handleBan = async () => {
+    if(user?.id && actionType === "ban"){
+      const res = await suspendUser({ id: user.id,reason:reason }).unwrap();
+      if(res?.success){
+        toast.success(`${user.name} is Ban Successfully`)
+      }
     }
 
+    if(user?.id && actionType === "unban") {
+      const res = await unSuspenndUser({ id: user.id }).unwrap();
+      if(res?.success){
+        toast.success(`${user.name} is Unbanned Successfully`)
+      }
+    }
+  }
 
   const handleSuspend = async () => {
     // Handle suspend/unsuspend logic
@@ -77,6 +91,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
       console.log("Suspended user:", res);
       if(res?.success){
         toast.success(`${user.name} is Suspended Successfully`)
+        setReason("")
       }
     }
 
@@ -85,6 +100,7 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
       console.log("UnSuspended user:", res);
       if(res?.success){
         toast.success(`${user.name} is UnSuspended Successfully`)
+        setReason("")
       }
     }
 
@@ -180,6 +196,41 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
   return (
     <>
+
+    <Dialog open={actionType === "ban"  || actionType === "unban"} onOpenChange={onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{user.isIpBan ? "Unban" : "Ban"} User</DialogTitle>
+            <DialogDescription>
+              {user.isIpBan
+                ? `Are you sure you want to Unban ${user.name}? They will regain access to their account.`
+                : `Are you sure you want to Ban ${user.name}? They will lose access to their account.`}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="reason">Reason (optional)</Label>
+              <Textarea
+                id="reason"
+                placeholder="Enter reason for this action..."
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button variant={user.isIpBan ? "default" : "destructive"} onClick={handleBan}>
+              {user.isIpBan ? "Unban" : "Ban"} User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
+
       {/* Suspend/Unsuspend Modal */}
       <Dialog open={actionType === "suspend"  || actionType === "Unsuspend"} onOpenChange={onClose}>
         <DialogContent>
@@ -414,5 +465,3 @@ const UserActionModals =({ user, actionType, onClose,setActionType }: UserAction
 
 
 export default UserActionModals;
-
-

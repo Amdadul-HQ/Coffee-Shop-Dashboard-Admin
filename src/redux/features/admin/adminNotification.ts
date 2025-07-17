@@ -204,8 +204,21 @@ adminGetBanIpDetails:builder.query({
       method:"DELETE"
     }),
     invalidatesTags:["ip"]
+  }),
+  userBan: builder.mutation({
+    query:(id)=>({
+      url:`/admin/ip-ban/ban-user/${id}`,
+      method:"POST"
+    }),
+    invalidatesTags:["users","ip"]
+  }),
+  userUnBan:builder.mutation({
+    query:(id)=>({
+      url:`/admin/ip-ban/unban/${id}`,
+      method:"PATCH"
+    })
   })
   })
 })
 
-export const {useDeleteBanIpMutation,useCreateBanIpMutation,useAdminGetBanIpDetailsQuery,useAdminGetAllIdBanQuery,useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useUserUnBanMutation,useUserBanMutation,useDeleteBanIpMutation,useCreateBanIpMutation,useAdminGetBanIpDetailsQuery,useAdminGetAllIdBanQuery,useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
