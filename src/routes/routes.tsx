@@ -18,7 +18,7 @@ import StripeProductsList from "../components/dashboard/admin-all-product";
 import StripeCustomersList from "../components/dashboard/admin-customer-list";
 import BanManagementList from "../components/dashboard/admin-ban-api-list";
 import AdminAuditLogsList from "../components/dashboard/admin-logs";
-
+import PlanList from "../components/dashboard/admin-plan-limits";
 const router = createBrowserRouter([
     {
         path:'/',
@@ -85,6 +85,10 @@ const router = createBrowserRouter([
         {
             path:'admin-logs',
             element:<AdminAuditLogsList/>
+        },
+        {
+            path:'plan-limits',
+            element:<PlanList/>
         }
     ]
     },

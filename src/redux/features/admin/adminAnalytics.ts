@@ -74,7 +74,30 @@ const adminAnalytics = baseApi.injectEndpoints({
             };
         },
         }),
+        adminPlanLimits: builder.query({
+            query: () => ({
+                url: '/admin/plan-limits',
+                method: 'GET',
+            }),
+            providesTags: ['PlanLimits'],
+        }),
+        adminPlanDetails: builder.query({
+            query: ({id}) => ({
+                url: `/admin/plan-limits?${id}`,
+                method: 'GET',
+            }),
+        }),
+        adminUpdatePlanLimit: builder.mutation({
+            query: (data: { id: string; plan: string; maxLogsPerMonth: number; dataRetentionDays: number }) => ({
+                url: `/admin/plan-limits/${data.id}`,
+                method: 'PATCH',
+                body: {
+                    ...data
+                },
+            }),
+            invalidatesTags: ['PlanLimits'],
+        }),
     })
 })
 
-export const {useAdminUserActivityTrandQuery,useAdminUserGrowthQuery ,useAdminUserActivityQuery,useAdminUserRetentionQuery } = adminAnalytics
+export const {useAdminPlanDetailsQuery,useAdminUpdatePlanLimitMutation,useAdminPlanLimitsQuery,useAdminUserActivityTrandQuery,useAdminUserGrowthQuery ,useAdminUserActivityQuery,useAdminUserRetentionQuery } = adminAnalytics

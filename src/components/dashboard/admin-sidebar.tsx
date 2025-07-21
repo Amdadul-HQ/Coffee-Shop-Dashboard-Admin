@@ -1,4 +1,4 @@
-import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs } from "lucide-react"
+import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs, LucideMilestone } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -40,10 +40,16 @@ const AdminSidebar =() => {
       path: "coffee-shop-management"
     },
     {
-      title:"Plan Management",
+      title:"Stripe Plan Management",
       icon: CreditCard,
       view: "plan" as const,
       path: "plan"
+    },
+    {
+      title:"Plan Limits",
+      icon: LucideMilestone,
+      view: "plan-limits" as const,
+      path: "plan-limits"
     },
     {
       title:"Product Management",
