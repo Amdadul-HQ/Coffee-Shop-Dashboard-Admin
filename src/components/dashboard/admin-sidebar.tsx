@@ -1,4 +1,4 @@
-import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs, LucideMilestone } from "lucide-react"
+import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs, LucideMilestone, Shield } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -81,12 +81,12 @@ const AdminSidebar =() => {
       view:'logs' as const,
       path:'admin-logs'
     },
-    // {
-    //   title: "Paywall Control",
-    //   icon: Shield,
-    //   view: "paywall" as const,
-    //   path: "paywall-control"
-    // },
+    {
+      title: "Paywall Control",
+      icon: Shield,
+      view: "paywall" as const,
+      path: "paywall-control"
+    },
     {
       title:"Notifications",
       icon: Bell,
