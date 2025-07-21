@@ -142,7 +142,7 @@ const monthlyStats = transformGrowthData(growthApiData?.data?.monthly);
           <TabsList className="text-xs">
           <TabsTrigger value="users">User Analytics</TabsTrigger>
           <TabsTrigger value="retention">Retention & Churn</TabsTrigger>
-          <TabsTrigger value="features">Feature Usage</TabsTrigger>
+          {/* <TabsTrigger value="features">Feature Usage</TabsTrigger> */}
           <TabsTrigger value="growth">Growth Tracking</TabsTrigger>
         </TabsList>
         </div>
