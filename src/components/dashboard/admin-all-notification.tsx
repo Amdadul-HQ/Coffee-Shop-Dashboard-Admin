@@ -113,7 +113,6 @@ const NotificationsList=()=> {
       </div>
     )
   }
-  console.log(notificationsData)
   return (
     <div className="space-y-6 p-4">
       {/* Header */}
@@ -176,7 +175,7 @@ const NotificationsList=()=> {
       {/* Notifications List */}
       <div className="space-y-4">
         {notificationsData?.data?.map((notification:any, index:number) => (
-          <Card key={notification.id} className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors">
+          <Card key={index} className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
