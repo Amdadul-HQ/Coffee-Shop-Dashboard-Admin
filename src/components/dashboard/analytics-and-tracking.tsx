@@ -56,8 +56,8 @@ const {data:growthApiData} = useAdminUserGrowthQuery(undefined);
     coffeeShops: 0             // placeholder if needed
   }));
 
-const dailyStats = transformGrowthData(growthApiData?.data?.daily);
-const weeklyStats = transformGrowthData(growthApiData?.data?.weekly);
+// const dailyStats = transformGrowthData(growthApiData?.data?.daily);
+// const weeklyStats = transformGrowthData(growthApiData?.data?.weekly);
 const monthlyStats = transformGrowthData(growthApiData?.data?.monthly);
 
   if(isUserActivityFeching || isActiveCafeFetching || isLoading || isRetentionLoading) {
