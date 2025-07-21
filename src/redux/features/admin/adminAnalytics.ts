@@ -18,7 +18,31 @@ const adminAnalytics = baseApi.injectEndpoints({
             },
             providesTags: ["coffeeShop"],
         }),
-        adminUserRetention: builder.query({
+        adminUserActivityTrand: builder.query({
+        query: (args: { cohortDate: Date | string; retentionDay?: number }) => {
+            const params = new URLSearchParams();
+
+            if (args) {
+            if (args.cohortDate) {
+                const dateStr =
+                typeof args.cohortDate === 'string'
+                    ? args.cohortDate
+                    : args.cohortDate.toISOString().split('T')[0]; // Convert Date to 'YYYY-MM-DD'
+                params.append('cohortDate', dateStr);
+            }
+            if (args.retentionDay !== undefined) {
+                params.append('retentionDay', String(args.retentionDay));
+            }
+            }
+
+            return {
+            url: '/admin/analytics/user/churn',
+            method: 'GET',
+            params,
+            };
+        },
+        }),
+        adminUserRetention:builder.query({
         query: (args: { cohortDate: Date | string; retentionDay?: number }) => {
             const params = new URLSearchParams();
 
@@ -42,7 +66,15 @@ const adminAnalytics = baseApi.injectEndpoints({
             };
         },
         }),
+        adminUserGrowth: builder.query({
+        query: () => {
+            return {
+            url: '/admin/analytics/user/growth',
+            method: 'GET',
+            };
+        },
+        }),
     })
 })
 
-export const { useAdminUserActivityQuery,useAdminUserRetentionQuery } = adminAnalytics
+export const {useAdminUserActivityTrandQuery,useAdminUserGrowthQuery ,useAdminUserActivityQuery,useAdminUserRetentionQuery } = adminAnalytics

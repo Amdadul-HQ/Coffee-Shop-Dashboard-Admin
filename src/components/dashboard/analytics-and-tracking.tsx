@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Users, Activity, TrendingUp, Coffee, LoaderIcon } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
-import { useAdminUserActivityQuery, useAdminUserRetentionQuery } from "../../redux/features/admin/adminAnalytics"
+import { useAdminUserActivityQuery, useAdminUserActivityTrandQuery, useAdminUserGrowthQuery, useAdminUserRetentionQuery } from "../../redux/features/admin/adminAnalytics"
 import { useAdminGetAllCafeQuery } from "../../redux/features/admin/adminCoffeeManagement"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
@@ -14,31 +14,30 @@ export default function AnalyticsAndTrackingPage() {
 
 const cohortDate = new Date().toDateString();
 
-const { isLoading } = useAdminUserRetentionQuery({
+const { data,isLoading:isRetentionLoading } = useAdminUserActivityTrandQuery({
   cohortDate,
   retentionDay: 30,
 });
   
+const {data:apiRetentionData,isLoading} = useAdminUserRetentionQuery({
+  cohortDate,
+  retentionDay: 30,
+})
+
+const {data:growthApiData} = useAdminUserGrowthQuery(undefined);
   // console.log(userRetentions)
   
-  const userStats = [
-    { name: "Mon", activeUsers: 1200, newUsers: 45, coffeeShops: 23 },
-    { name: "Tue", activeUsers: 1350, newUsers: 52, coffeeShops: 25 },
-    { name: "Wed", activeUsers: 1180, newUsers: 38, coffeeShops: 22 },
-    { name: "Thu", activeUsers: 1420, newUsers: 67, coffeeShops: 28 },
-    { name: "Fri", activeUsers: 1380, newUsers: 43, coffeeShops: 26 },
-    { name: "Sat", activeUsers: 1520, newUsers: 78, coffeeShops: 30 },
-    { name: "Sun", activeUsers: 1650, newUsers: 89, coffeeShops: 32 },
-  ]
+  const userStats = data?.data?.map((item:any) => ({
+  name: item.date,             // X-axis label (was Mon/Tue...)
+  activeUsers: item.totalUsers - item.churnedUsers,  // derived active users
+  newUsers: item.totalUsers,   // treating totalUsers as new signups per cohort
+  churnRate: item.churnRate    // optional, can use in a separate chart
+})) ?? [];
   
-  const retentionData = [
-    { period: "Day 1", retention: 100 },
-    { period: "Day 7", retention: 65 },
-    { period: "Day 14", retention: 45 },
-    { period: "Day 30", retention: 32 },
-    { period: "Day 60", retention: 28 },
-    { period: "Day 90", retention: 25 },
-  ]
+  const retentionData = apiRetentionData?.data?.map((item:any) => ({
+  period: item.date,
+  retention: item.retentionRate,
+}));
   
   const featureUsage = [
     { name: "Coffee Discovery", value: 35, color: "#8884d8" },
@@ -48,11 +47,23 @@ const { isLoading } = useAdminUserRetentionQuery({
     { name: "Social Features", value: 5, color: "#00ff00" },
   ]
   
-  if(isUserActivityFeching || isActiveCafeFetching || isLoading){
+  
+  const transformGrowthData = (data:any) =>
+  data?.map((item:any) => ({
+    name: item.date,           // for XAxis
+    newUsers: item.count,      // treated like new user count
+    growthRate: item.growthRate, // optionally use this as another line
+    coffeeShops: 0             // placeholder if needed
+  }));
+
+const dailyStats = transformGrowthData(growthApiData?.data?.daily);
+const weeklyStats = transformGrowthData(growthApiData?.data?.weekly);
+const monthlyStats = transformGrowthData(growthApiData?.data?.monthly);
+
+  if(isUserActivityFeching || isActiveCafeFetching || isLoading || isRetentionLoading) {
     return <LoaderIcon/>
   }
 
-  console.log(timeRange,userActivity.data)
   
   return (
     <div className="space-y-6 p-4">
@@ -137,25 +148,38 @@ const { isLoading } = useAdminUserRetentionQuery({
         </div>
 
         <TabsContent value="users" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>User Activity Trends</CardTitle>
-              <CardDescription>Daily active users and new registrations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={userStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="activeUsers" stroke="#8884d8" strokeWidth={2} name="Active Users" />
-                  <Line type="monotone" dataKey="newUsers" stroke="#82ca9d" strokeWidth={2} name="New Users" />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
+  <Card>
+    <CardHeader>
+      <CardTitle>User Activity Trends</CardTitle>
+      <CardDescription>Daily active users and new registrations</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={userStats}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="activeUsers"
+            stroke="#8884d8"
+            strokeWidth={2}
+            name="Active Users"
+          />
+          <Line
+            type="monotone"
+            dataKey="newUsers"
+            stroke="#82ca9d"
+            strokeWidth={2}
+            name="New Users"
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </CardContent>
+  </Card>
+</TabsContent>
+
 
         <TabsContent value="retention" className="space-y-4">
           <Card>
@@ -237,25 +261,38 @@ const { isLoading } = useAdminUserRetentionQuery({
         </TabsContent>
 
         <TabsContent value="growth" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Growth Metrics</CardTitle>
-              <CardDescription>Track platform growth over time</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={userStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="coffeeShops" stroke="#ff7300" strokeWidth={2} name="Coffee Shops" />
-                  <Line type="monotone" dataKey="newUsers" stroke="#82ca9d" strokeWidth={2} name="New Users" />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
+  <Card>
+    <CardHeader>
+      <CardTitle>Growth Metrics</CardTitle>
+      <CardDescription>Track platform growth over time</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={monthlyStats}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="newUsers"
+            stroke="#82ca9d"
+            strokeWidth={2}
+            name="New Users"
+          />
+          <Line
+            type="monotone"
+            dataKey="growthRate"
+            stroke="#8884d8"
+            strokeWidth={2}
+            name="Growth Rate (%)"
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </CardContent>
+  </Card>
+</TabsContent>
+
       </Tabs>
     </div>
   )
