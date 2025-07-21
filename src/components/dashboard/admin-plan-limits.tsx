@@ -30,6 +30,7 @@ console.log(planLimits)
 
   const handleDelete = async (id: string, planName: string) => {
     try {
+      console.log(id,planName)
     //   await deletePlanLimit(id).unwrap()
     //   toast({
     //     title: "Success!",

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { Card, CardContent, CardHeader } from "../ui/card"
 import { Input } from "../ui/input"
 import { Skeleton } from "../ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs"
