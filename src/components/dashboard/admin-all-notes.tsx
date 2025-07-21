@@ -199,10 +199,14 @@ const UserAdminNotesList = () => {
                       <div>
                         <p className="font-medium">{note?.user?.name}</p>
                         <p className="text-sm text-muted-foreground">{note?.user?.email}</p>
+                        <Badge variant="outline" className="md:hidden mt-1 flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(note?.user_admin_notes?.createdAt)}
+                      </Badge>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="flex items-center gap-1">
+                      <Badge variant="outline" className="md:flex hidden items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {formatDate(note?.user_admin_notes?.createdAt)}
                       </Badge>

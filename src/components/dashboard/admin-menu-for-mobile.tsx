@@ -1,15 +1,22 @@
 import { useState } from "react"
 import {  motion } from "motion/react"
-import { User, Coffee, LayoutDashboard, Bell } from "lucide-react"
+import { User, Coffee, LayoutDashboard, Bell, Megaphone, CreditCard, ShoppingBasket, NotebookTabs, UsersIcon, Ban, Logs } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Link } from "react-router-dom"
 
 const tabs = [
-  { name: "User Management", icon: User, path:"user-management" },
-  { name: "Analytics", icon: LayoutDashboard, path:"analytics-and-tracking" },
-  { name: "Coffee Shop Management", icon: Coffee, path:"coffee-shop-management" },
-  { name:"Notifications", icon: Bell,path: "notifications" },
-]
+  { name: "User Management", icon: User, path: "user-management" },
+  { name: "Analytics", icon: LayoutDashboard, path: "analytics-and-tracking" },
+  { name: "Coffee Shop Management", icon: Coffee, path: "coffee-shop-management" },
+  { name: "Notifications", icon: Bell, path: "notifications" },
+  { name: "Announcement", icon: Megaphone, path: "announcement" },
+  { name: "Plan Management", icon: CreditCard, path: "plan" },
+  { name: "Product Management", icon: ShoppingBasket, path: "products" },
+  { name: "Notes", icon: NotebookTabs, path: "notes" },
+  { name: "Customers", icon: UsersIcon, path: "customer" },
+  { name: "Ban Ip", icon: Ban, path: "ban-ip" },
+  { name: "Admin Logs", icon: Logs, path: "admin-logs" },
+];
 
 const MobileNavbar =()=> {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -26,7 +33,7 @@ const MobileNavbar =()=> {
             key={tab.name}
             onClick={() => setActiveIndex(index)}
             className={cn(
-              "flex flex-col items-center justify-center px-4 py-1 h-full relative text-sm transition-all",
+              "flex flex-col items-center justify-center px-0 py-1 h-full relative text-sm transition-all",
               isActive ? "text-white" : "text-zinc-400"
             )}
           >
@@ -40,7 +47,7 @@ const MobileNavbar =()=> {
             >
               <Icon className="h-6 w-6" />
             </motion.div>
-            <span className="mt-1">{tab.name}</span>
+            {/* <span className="mt-1">{tab.name}</span> */}
 
             {isActive && (
               <motion.div

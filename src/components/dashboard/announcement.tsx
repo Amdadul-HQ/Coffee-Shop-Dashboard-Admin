@@ -175,7 +175,7 @@ useEffect(() => {
                 {errors.message && <p className="text-red-400 text-sm">{errors.message.message}</p>}
               </div>
 
-              <div className="flex justify-between gap-x-3">
+              <div className="flex justify-between md:flex-row flex-col gap-x-3">
 
                   <div className="space-y-2 w-full">
                 <Label className="text-white">Start Date & Time</Label>

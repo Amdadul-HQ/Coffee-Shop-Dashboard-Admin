@@ -166,7 +166,7 @@ const AnnouncementsList =() => {
                             className="bg-gray-800 border-gray-700 text-white min-h-[100px]"
                           />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid md:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="startsAt" className="text-white">
                               Starts At
