@@ -59,7 +59,6 @@ const StripePlansList = () => {
     take: pageSize,
   })
 
-  console.log(data)
 
 //   const [togglePlanStatus, { isLoading: isToggling }] = useTogglePlanStatusMutation()
 
@@ -102,11 +101,11 @@ const StripePlansList = () => {
   }
 
   const filterPlans = (plans: Plan[]) => {
-    return plans.filter((plan) => {
+    return plans?.filter((plan) => {
       const matchesSearch =
-        plan.lookupKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plan.stripePriceId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plan.currency.toLowerCase().includes(searchTerm.toLowerCase())
+        plan?.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        plan?.stripePriceId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        plan?.currency?.toLowerCase().includes(searchTerm.toLowerCase())
 
       const matchesTab =
         activeTab === "all" || (activeTab === "active" && plan.active) || (activeTab === "inactive" && !plan.active)
@@ -118,7 +117,6 @@ const StripePlansList = () => {
   const dbPlans = data?.data?.db || []
   const stripePlans = data?.data?.stripe || []
   const filteredDbPlans = filterPlans(dbPlans)
-
   if (error) {
     return (
       <Card className="w-full">
@@ -228,8 +226,8 @@ const StripePlansList = () => {
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-lg">{plan.lookupKey}</CardTitle>
-                      <p className="text-sm text-muted-foreground">ID: {plan.stripePriceId}</p>
+                      {/* <CardTitle className="text-lg">{plan?.name}</CardTitle> */}
+                      <p className="text-sm text-muted-foreground">ID: {plan.stripePriceId.substring(0,10)}...{plan.stripePriceId.substring(20,(plan?.stripePriceId?.length -1))}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant={plan.active ? "default" : "secondary"}>

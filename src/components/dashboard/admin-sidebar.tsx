@@ -105,7 +105,7 @@ const AdminSidebar =() => {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
-                <SidebarMenuItem key={item.view}>
+                <SidebarMenuItem key={item.path}>
                   <NavLink to={`/dashboard/admin/${item.path}`}>
                   <SidebarMenuButton isActive={`/dashboard/admin/${item.path}` === location.pathname}>
                     <item.icon className="h-4 w-4" />
