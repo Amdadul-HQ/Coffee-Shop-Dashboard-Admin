@@ -25,11 +25,11 @@ const MobileNavbar =()=> {
   const [open, setOpen] = useState(false)
 
   return (
-    <>
+    <div className="transition-all duration-500 ease-in-out">
     <button
             onClick={() => setOpen(!open)}
             className={cn(
-              "sm:hidden flex flex-col items-center justify-center px-0 pb-1 h-fit fixed top-5 right-3 w-fit text-sm transition-all",
+              "sm:hidden flex flex-col items-center border justify-center px-2 rounded-lg bg-gray-90 py-2 h-fit fixed top-5 right-3 w-fit text-sm transition-all",
               open ? "text-white" : "text-zinc-400"
             )}
           >
@@ -54,7 +54,7 @@ const MobileNavbar =()=> {
               />
             )}
           </button>
-    <div className={`fixed ${open ? "left-0" : "-left-10"} md:hidden duration-1000  top-20 flex-col px-3 w-fit rounded-r-lg inset-x-0 bg-zinc-900 border-t border-zinc-700 flex justify-around py-2 z-50 shadow-xl`}>
+    <div className={`fixed ${open ? "left-0" : "-left-10"} md:hidden duration-1000 transition-all  top-20 flex-col px-3 w-fit rounded-r-lg inset-x-0 bg-zinc-900 border-t border-zinc-700 flex justify-around py-2 z-50 shadow-xl`}>
       {/* <Link key={index} to={`/dashboard/admin/${tab.path}`}> */}
           
           {/* </Link> */}
@@ -66,13 +66,14 @@ const MobileNavbar =()=> {
         <Link key={index} to={`/dashboard/admin/${tab.path}`}>
           <button
             key={tab.name}
-            onClick={() => {setActiveIndex(index);setTimeout(()=>setOpen(false),500) }}
+            onClick={() => {setActiveIndex(index)}}
             className={cn(
-              "flex flex-col items-center justify-center px-0 py-3 h-full relative text-sm transition-all",
+              "flex gap-1 items-center justify-center px-0 py-3 h-full relative text-sm transition-all",
               isActive ? "text-white" : "text-zinc-400",
             )}
           >
             <motion.div
+              className="flex gap-x-2 pl-3 items-center"
               initial={false}
               animate={{
                 y: isActive ? -4 : 0,
@@ -81,8 +82,8 @@ const MobileNavbar =()=> {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <Icon className="h-6 w-6" />
+            <span className="mt-1">{tab.name}</span>
             </motion.div>
-            {/* <span className="mt-1">{tab.name}</span> */}
 
             {isActive && (
               <motion.div
@@ -95,7 +96,7 @@ const MobileNavbar =()=> {
         )
       })}
     </div>
-    </>
+    </div>
   )
 }
 
