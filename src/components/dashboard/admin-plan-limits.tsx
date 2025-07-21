@@ -16,7 +16,7 @@ import {
 } from "../ui/alert-dialog"
 import { useAdminPlanLimitsQuery } from "../../redux/features/admin/adminAnalytics"
 import PlanDetailsDialog from "./plan-details-dialog"
-import PlanEditDialog from "./plan-edit-dialog"
+import { PlanEditDialog } from "./plan-edit-dialog"
 
 
 const PlanList=()=> {

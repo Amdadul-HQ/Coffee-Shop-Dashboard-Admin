@@ -1,63 +1,89 @@
-"use client"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { Dialog, DialogDescription } from "../ui/dialog"
+import {
+  Dialog,
+  DialogDescription,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "../ui/dialog"
 import { Switch } from "../ui/switch"
-import { DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../ui/dialog"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { useAdminUpdatePlanLimitMutation } from "../../redux/features/admin/adminAnalytics"
+// import { useToast } from "@/hooks/use-toast"
+// Assuming PlanLimit type is consistent with the data structure expected by the mutation
+// import type { PlanLimit } from "@/api/planLimitsApi"
+
+// IMPORTANT: Update this import path to match your project's structure
+// For example: import { useAdminUpdatePlanLimitMutation } from "@/redux/features/admin/adminAnalytics";
+// For this example, I'll use the mutation from the simulated API for consistency within the CodeProject.
+// import { useUpdatePlanLimitMutation } from "@/api/planLimitsApi"
+
+// Define the schema for the editable fields
+const formSchema = z.object({
+  maxLogsPerMonth: z.coerce.number().min(0, "Max Logs must be a non-negative number"),
+  maxShareCount: z.coerce.number().min(0, "Max Share must be a non-negative number"),
+  dataRetentionDays: z.coerce.number().min(0, "Data Retention must be a non-negative number"),
+})
+
+type FormValues = z.infer<typeof formSchema>
 
 interface PlanEditDialogProps {
-  plan: any
+  plan: any | null // Using PlanLimit type for better type safety
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-const PlanEditDialog =({ plan, open, onOpenChange }: PlanEditDialogProps) => {
-  const [formData, setFormData] = useState<Partial<any>>({})
+export function PlanEditDialog({ plan, open, onOpenChange }: PlanEditDialogProps) {
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      maxLogsPerMonth: 0,
+      maxShareCount: 0,
+      dataRetentionDays: 0,
+    },
+  })
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = form
+  // Using useUpdatePlanLimitMutation from the simulated API for this CodeProject
+  // If you are using useAdminUpdatePlanLimitMutation, replace this line:
   const [updatePlanLimit, { isLoading }] = useAdminUpdatePlanLimitMutation()
 //   const { toast } = useToast()
 
   useEffect(() => {
     if (plan) {
-      setFormData({
-        id: plan.id,
-        plan: plan.plan,
+      reset({
         maxLogsPerMonth: plan.maxLogsPerMonth,
         maxShareCount: plan.maxShareCount,
         dataRetentionDays: plan.dataRetentionDays,
-        upgradeCtaEnabled: plan.upgradeCtaEnabled,
       })
     }
-  }, [plan])
+  }, [plan, reset])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value, type, checked } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [id]: type === "checkbox" ? checked : type === "number" ? Number.parseInt(value, 10) : value,
-    }))
-  }
-
-  const handleSwitchChange = (checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      upgradeCtaEnabled: checked,
-    }))
-  }
-
-  const handleSubmit = async () => {
-    if (!formData.id) return
+  const onSubmit = async (data: FormValues) => {
+    if (!plan?.id) return
 
     try {
-      await updatePlanLimit(formData as any).unwrap()
+      // Construct the payload, including non-editable fields from the original plan
+      const payload: any = {
+        ...plan, // Keep all original plan properties
+        ...data, // Override with updated editable fields
+      }
+      await updatePlanLimit(payload).unwrap()
     //   toast({
     //     title: "Success!",
-    //     description: `Plan "${formData.plan}" updated successfully.`,
+    //     description: `Plan "${plan.plan}" updated successfully.`,
     //   })
       onOpenChange(false)
     } catch (error) {
@@ -79,12 +105,12 @@ const PlanEditDialog =({ plan, open, onOpenChange }: PlanEditDialogProps) => {
           <DialogTitle>Edit Plan: {plan.plan}</DialogTitle>
           <DialogDescription>Make changes to the plan details here. Click save when you're done.</DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="plan" className="text-right">
               Plan Name
             </Label>
-            <Input id="plan" readOnly value={formData.plan || ""} onChange={handleChange} className="col-span-3" />
+            <Input id="plan" readOnly value={plan.plan || ""} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="maxLogsPerMonth" className="text-right">
@@ -93,10 +119,12 @@ const PlanEditDialog =({ plan, open, onOpenChange }: PlanEditDialogProps) => {
             <Input
               id="maxLogsPerMonth"
               type="number"
-              value={formData.maxLogsPerMonth || ""}
-              onChange={handleChange}
+              {...register("maxLogsPerMonth", { valueAsNumber: true })}
               className="col-span-3"
             />
+            {errors.maxLogsPerMonth && (
+              <p className="text-red-500 text-xs col-span-4 col-start-2">{errors.maxLogsPerMonth.message}</p>
+            )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="maxShareCount" className="text-right">
@@ -105,10 +133,12 @@ const PlanEditDialog =({ plan, open, onOpenChange }: PlanEditDialogProps) => {
             <Input
               id="maxShareCount"
               type="number"
-              value={formData.maxShareCount || ""}
-              onChange={handleChange}
+              {...register("maxShareCount", { valueAsNumber: true })}
               className="col-span-3"
             />
+            {errors.maxShareCount && (
+              <p className="text-red-500 text-xs col-span-4 col-start-2">{errors.maxShareCount.message}</p>
+            )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="dataRetentionDays" className="text-right">
@@ -117,32 +147,31 @@ const PlanEditDialog =({ plan, open, onOpenChange }: PlanEditDialogProps) => {
             <Input
               id="dataRetentionDays"
               type="number"
-              value={formData.dataRetentionDays || ""}
-              onChange={handleChange}
+              {...register("dataRetentionDays", { valueAsNumber: true })}
               className="col-span-3"
             />
+            {errors.dataRetentionDays && (
+              <p className="text-red-500 text-xs col-span-4 col-start-2">{errors.dataRetentionDays.message}</p>
+            )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="upgradeCtaEnabled" className="text-right">
               Upgrade CTA
             </Label>
             <Switch
-              disabled
               id="upgradeCtaEnabled"
-              checked={formData.upgradeCtaEnabled ?? false}
-              onCheckedChange={handleSwitchChange}
+              checked={plan.upgradeCtaEnabled ?? false}
+              disabled // This field is not editable
               className="col-span-3 justify-self-start"
             />
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit" onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save changes"}
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save changes"}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
 }
-
-export default PlanEditDialog

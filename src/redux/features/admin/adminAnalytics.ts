@@ -89,10 +89,12 @@ const adminAnalytics = baseApi.injectEndpoints({
         }),
         adminUpdatePlanLimit: builder.mutation({
             query: (data: { id: string; plan: string; maxLogsPerMonth: number; dataRetentionDays: number }) => ({
-                url: `/admin/plan-limits/${data.id}`,
+                url: `/admin/plan-limits/update/${data.id}`,
                 method: 'PATCH',
                 body: {
-                    ...data
+                    plan: data.plan,
+                    maxLogsPerMonth: data.maxLogsPerMonth,
+                    dataRetentionDays: data.dataRetentionDays,
                 },
             }),
             invalidatesTags: ['PlanLimits'],
