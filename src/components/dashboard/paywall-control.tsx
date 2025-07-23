@@ -1,133 +1,166 @@
-import { useState } from "react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { Plus, Settings, Flag } from "lucide-react"
+import { Plus, Settings } from "lucide-react"
 import { Switch } from "../ui/switch"
+import { useAdminPaywallControlMutation, useAdminpaywallControlQuery } from "../../redux/features/admin/adminNotification"
+import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 
-interface Feature {
-  id: string
-  name: string
-  description: string
-  isPaid: boolean
-  isEnabled: boolean
-  userGroup?: string
-}
 
-interface FeatureFlag {
+type FeatureFlagFormData = {
   id: string
-  name: string
-  description: string
-  isEnabled: boolean
-  targetUsers: string[]
-  targetGroups: string[]
+  featureTitle: string
+  featureKey: string
+  featureDescription: string
+  plan: string
+  enabled: boolean
 }
 
 const PaywallControl =() => {
-  const [features, setFeatures] = useState<Feature[]>([
-    {
-      id: "1",
-      name: "Advanced Analytics",
-      description: "Detailed analytics and reporting features",
-      isPaid: true,
-      isEnabled: true,
-    },
-    {
-      id: "2",
-      name: "Export Data",
-      description: "Export data in various formats",
-      isPaid: true,
-      isEnabled: true,
-    },
-    {
-      id: "3",
-      name: "Basic Dashboard",
-      description: "Standard dashboard view",
-      isPaid: false,
-      isEnabled: true,
-    },
-    {
-      id: "4",
-      name: "Premium Templates",
-      description: "Access to premium template library",
-      isPaid: true,
-      isEnabled: false,
-    },
-  ])
 
-  const [featureFlags, setFeatureFlags] = useState<FeatureFlag[]>([
-    {
-      id: "1",
-      name: "Beta UI",
-      description: "New user interface design",
-      isEnabled: true,
-      targetUsers: ["user1", "user2"],
-      targetGroups: ["beta-testers"],
-    },
-    {
-      id: "2",
-      name: "AI Assistant",
-      description: "AI-powered assistant feature",
-      isEnabled: false,
-      targetUsers: [],
-      targetGroups: ["premium-users"],
-    },
-  ])
+  const {data,isLoading} = useAdminpaywallControlQuery(undefined)
+  const [adminPaywallControl,{isLoading:isPaywallControlLoading}] =useAdminPaywallControlMutation()
+  // const [features, setFeatures] = useState<Feature[]>([
+    //   {
+      //     id: "1",
+      //     name: "Advanced Analytics",
+      //     description: "Detailed analytics and reporting features",
+      //     isPaid: true,
+      //     isEnabled: true,
+      //   },
+      //   {
+        //     id: "2",
+        //     name: "Export Data",
+        //     description: "Export data in various formats",
+        //     isPaid: true,
+        //     isEnabled: true,
+        //   },
+        //   {
+          //     id: "3",
+          //     name: "Basic Dashboard",
+          //     description: "Standard dashboard view",
+          //     isPaid: false,
+          //     isEnabled: true,
+          //   },
+          //   {
+            //     id: "4",
+            //     name: "Premium Templates",
+            //     description: "Access to premium template library",
+            //     isPaid: true,
+            //     isEnabled: false,
+            //   },
+            // ])
+            
+            // const [featureFlags, setFeatureFlags] = useState<FeatureFlag[]>([
+            //   {
+            //     id: "1",
+            //     name: "Beta UI",
+            //     description: "New user interface design",
+            //     isEnabled: true,
+            //     targetUsers: ["user1", "user2"],
+            //     targetGroups: ["beta-testers"],
+            //   },
+            //   {
+            //     id: "2",
+            //     name: "AI Assistant",
+            //     description: "AI-powered assistant feature",
+            //     isEnabled: false,
+            //     targetUsers: [],
+            //     targetGroups: ["premium-users"],
+            //   },
+            // ])
+            
+            // const [newFeature, setNewFeature] = useState({
+            //   name: "",
+            //   description: "",
+            //   isPaid: false,
+            // })
+            
+            // const [newFlag, setNewFlag] = useState({
+            //   name: "",
+            //   description: "",
+            //   targetGroup: "",
+            // })
+            
+            // const toggleFeature = (id: string, field: "isPaid" | "isEnabled") => {
+            //   // setFeatures(features.map((feature) => (feature.id === id ? { ...feature, [field]: !feature[field] } : feature)))
+            // }
+            
+            // const toggleFeatureFlag = (id: string) => {
+            //   setFeatureFlags(featureFlags.map((flag) => (flag.id === id ? { ...flag, isEnabled: !flag.isEnabled } : flag)))
+            // }
+            
+            // const addFeature = () => {
+            //   if (newFeature.name && newFeature.description) {
+            //     const feature: Feature = {
+            //       id: Date.now().toString(),
+            //       name: newFeature.name,
+            //       description: newFeature.description,
+            //       isPaid: newFeature.isPaid,
+            //       isEnabled: true,
+            //     }
+            //     // setFeatures([...features, feature])
+            //     setNewFeature({ name: "", description: "", isPaid: false })
+            //   }
+            // }
+            
+            // const addFeatureFlag = () => {
+            //   if (newFlag.name && newFlag.description) {
+            //     const flag: FeatureFlag = {
+            //       id: Date.now().toString(),
+            //       name: newFlag.name,
+            //       description: newFlag.description,
+            //       isEnabled: false,
+            //       targetUsers: [],
+            //       targetGroups: newFlag.targetGroup ? [newFlag.targetGroup] : [],
+            //     }
+            //     setFeatureFlags([...featureFlags, flag])
+            //     setNewFlag({ name: "", description: "", targetGroup: "" })
+            //   }
+            // }
 
-  const [newFeature, setNewFeature] = useState({
-    name: "",
-    description: "",
-    isPaid: false,
-  })
+              const { register, handleSubmit, control, formState: { errors } } = useForm<FeatureFlagFormData>({
+              defaultValues: {
+                enabled: true,
+              },
+            })
 
-  const [newFlag, setNewFlag] = useState({
-    name: "",
-    description: "",
-    targetGroup: "",
-  })
+            if(isLoading || isPaywallControlLoading) return <div>Loading...</div>
+            const features = data?.data || []
+            const onSubmit = async(data: FeatureFlagFormData) => {
+              console.log(data)
 
-  const toggleFeature = (id: string, field: "isPaid" | "isEnabled") => {
-    setFeatures(features.map((feature) => (feature.id === id ? { ...feature, [field]: !feature[field] } : feature)))
-  }
-
-  const toggleFeatureFlag = (id: string) => {
-    setFeatureFlags(featureFlags.map((flag) => (flag.id === id ? { ...flag, isEnabled: !flag.isEnabled } : flag)))
-  }
-
-  const addFeature = () => {
-    if (newFeature.name && newFeature.description) {
-      const feature: Feature = {
-        id: Date.now().toString(),
-        name: newFeature.name,
-        description: newFeature.description,
-        isPaid: newFeature.isPaid,
-        isEnabled: true,
-      }
-      setFeatures([...features, feature])
-      setNewFeature({ name: "", description: "", isPaid: false })
-    }
-  }
-
-  const addFeatureFlag = () => {
-    if (newFlag.name && newFlag.description) {
-      const flag: FeatureFlag = {
-        id: Date.now().toString(),
-        name: newFlag.name,
-        description: newFlag.description,
-        isEnabled: false,
-        targetUsers: [],
-        targetGroups: newFlag.targetGroup ? [newFlag.targetGroup] : [],
-      }
-      setFeatureFlags([...featureFlags, flag])
-      setNewFlag({ name: "", description: "", targetGroup: "" })
-    }
-  }
-
+              try{
+                const res =  await adminPaywallControl(data)
+                console.log(res)
+                if(res.data.success){
+                  // Optionally, you can show a success message or update the UI
+                 toast.success("Paywall control updated successfully")
+                  // console.log("Paywall control updated successfully")
+                }
+              }catch(error){
+                console.error("Failed to update paywall control:", error)
+                toast.error("Failed to update paywall control")
+              }
+              
+              // const newFlag: FeatureFlag = {
+              //   id: Date.now().toString(),
+              //   name: data.name,
+              //   description: data.description,
+              //   isEnabled: data.enabled,
+              //   targetUsers: [],
+              //   targetGroups: [data.targetGroup],
+              // }
+              // setFeatureFlags([...featureFlags, newFlag])
+              // setNewFlag({ name: "", description: "", targetGroup: "" })
+            }
+            
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -135,7 +168,7 @@ const PaywallControl =() => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total Features</CardTitle>
@@ -149,7 +182,7 @@ const PaywallControl =() => {
             <CardTitle className="text-sm font-medium">Paid Features</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{features.filter((f) => f.isPaid).length}</div>
+            <div className="text-2xl font-bold">{features.filter((f:any) => f.plan === "pro").length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -157,17 +190,17 @@ const PaywallControl =() => {
             <CardTitle className="text-sm font-medium">Active Flags</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{featureFlags.filter((f) => f.isEnabled).length}</div>
+            <div className="text-2xl font-bold">{features.filter((f:FeatureFlagFormData) => f.enabled).length}</div>
           </CardContent>
         </Card>
-        <Card>
+        {/* <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Beta Users</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">24</div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Feature Management */}
@@ -184,41 +217,80 @@ const PaywallControl =() => {
                 Add Feature
               </Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Feature</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="feature-name">Feature Name</Label>
-                  <Input
-                    id="feature-name"
-                    value={newFeature.name}
-                    onChange={(e) => setNewFeature({ ...newFeature, name: e.target.value })}
-                    placeholder="Enter feature name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="feature-description">Description</Label>
-                  <Input
-                    id="feature-description"
-                    value={newFeature.description}
-                    onChange={(e) => setNewFeature({ ...newFeature, description: e.target.value })}
-                    placeholder="Enter feature description"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="feature-paid"
-                    checked={newFeature.isPaid}
-                    onCheckedChange={(checked) => setNewFeature({ ...newFeature, isPaid: checked })}
-                  />
-                  <Label htmlFor="feature-paid">Paid Feature</Label>
-                </div>
-                <Button onClick={addFeature} className="w-full">
-                  Add Feature
-                </Button>
-              </div>
+                <DialogContent>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <Label htmlFor="featureTitle">Feature Title</Label>
+          <Input
+            id="featureTitle"
+            placeholder="Enter Feature Title"
+            {...register("featureTitle", { required: "Feature Title is required" })}
+          />
+          {errors.featureTitle && <p className="text-sm text-red-500">{errors.featureTitle.message}</p>}
+        </div>
+
+        <div>
+          <Label htmlFor="feature-key">Feature Key</Label>
+          <Input
+            id="feature-key"
+            placeholder="Enter feature key"
+            {...register("featureKey", { required: "Feature key is required" })}
+          />
+          {errors.featureKey && <p className="text-sm text-red-500">{errors.featureKey.message}</p>}
+        </div>
+
+        <div>
+          <Label htmlFor="flag-description">Description</Label>
+          <Input
+            id="flag-description"
+            placeholder="Enter flag description"
+            {...register("featureDescription", { required: "Description is required" })}
+          />
+          {errors.featureDescription && <p className="text-sm text-red-500">{errors.featureDescription.message}</p>}
+        </div>
+
+        <div>
+          <Label htmlFor="target-group">Plan Select</Label>
+          <Controller
+            name="plan"
+            control={control}
+            rules={{ required: "Target group is required" }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select target group" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="free">Free</SelectItem>
+                  <SelectItem value="pro">Pro</SelectItem>
+                  {/* <SelectItem value="admin-users">Admin Users</SelectItem> */}
+                  {/* <SelectItem value="all-users">All Users</SelectItem> */}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.plan && <p className="text-sm text-red-500">{errors.plan.message}</p>}
+        </div>
+
+        <div className="flex items-center justify-between">
+          <Label htmlFor="enabled">Enabled</Label>
+          <Controller
+            name="enabled"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                id="enabled"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+
+        <Button type="submit" className="w-full">
+          Add Feature Flag
+        </Button>
+      </form>
             </DialogContent>
           </Dialog>
         </CardHeader>
@@ -234,30 +306,30 @@ const PaywallControl =() => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {features.map((feature) => (
+                {features.map((feature:FeatureFlagFormData) => (
                   <TableRow key={feature.id}>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{feature.name}</div>
-                        <div className="text-sm text-muted-foreground">{feature.description}</div>
+                        <div className="font-medium">{feature.featureTitle}</div>
+                        <div className="text-sm text-muted-foreground">{feature.featureDescription}</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={feature.isPaid ? "default" : "outline"}>{feature.isPaid ? "Paid" : "Free"}</Badge>
+                      <Badge variant={feature.plan === "free" ? "outline" :  "default"}>{feature.plan === "free" ? "Free" : "Paid"}</Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Switch
-                          checked={feature.isEnabled}
-                          onCheckedChange={() => toggleFeature(feature.id, "isEnabled")}
+                          checked={feature.enabled}
+                          // onCheckedChange={() => toggleFeature(feature.id, "isEnabled")}
                         />
-                        <span className="text-sm">{feature.isEnabled ? "Enabled" : "Disabled"}</span>
+                        <span className="text-sm">{feature.enabled ? "Enabled" : "Disabled"}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Switch checked={feature.isPaid} onCheckedChange={() => toggleFeature(feature.id, "isPaid")} />
-                        <span className="text-sm">{feature.isPaid ? "Paid" : "Free"}</span>
+                        {/* <Switch checked={feature.isPaid} onCheckedChange={() => toggleFeature(feature.id, "isPaid")} /> */}
+                        <span className="text-sm">{feature.plan === "pro" ? "Paid" : "Free"}</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -269,7 +341,7 @@ const PaywallControl =() => {
       </Card>
 
       {/* Feature Flags */}
-      <Card>
+      {/* <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Flag className="h-5 w-5" />
@@ -283,50 +355,80 @@ const PaywallControl =() => {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Feature Flag</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="flag-name">Flag Name</Label>
-                  <Input
-                    id="flag-name"
-                    value={newFlag.name}
-                    onChange={(e) => setNewFlag({ ...newFlag, name: e.target.value })}
-                    placeholder="Enter flag name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="flag-description">Description</Label>
-                  <Input
-                    id="flag-description"
-                    value={newFlag.description}
-                    onChange={(e) => setNewFlag({ ...newFlag, description: e.target.value })}
-                    placeholder="Enter flag description"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="target-group">Target Group</Label>
-                  <Select
-                    value={newFlag.targetGroup}
-                    onValueChange={(value) => setNewFlag({ ...newFlag, targetGroup: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select target group" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="beta-testers">Beta Testers</SelectItem>
-                      <SelectItem value="premium-users">Premium Users</SelectItem>
-                      <SelectItem value="admin-users">Admin Users</SelectItem>
-                      <SelectItem value="all-users">All Users</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={addFeatureFlag} className="w-full">
-                  Add Feature Flag
-                </Button>
-              </div>
-            </DialogContent>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <Label htmlFor="flag-name">Flag Name</Label>
+          <Input
+            id="flag-name"
+            placeholder="Enter flag name"
+            {...register("name", { required: "Flag name is required" })}
+          />
+          {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+        </div>
+
+        <div>
+          <Label htmlFor="feature-key">Feature Key</Label>
+          <Input
+            id="feature-key"
+            placeholder="Enter feature key"
+            {...register("featureKey", { required: "Feature key is required" })}
+          />
+          {errors.featureKey && <p className="text-sm text-red-500">{errors.featureKey.message}</p>}
+        </div>
+
+        <div>
+          <Label htmlFor="flag-description">Description</Label>
+          <Input
+            id="flag-description"
+            placeholder="Enter flag description"
+            {...register("description", { required: "Description is required" })}
+          />
+          {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+        </div>
+
+        <div>
+          <Label htmlFor="target-group">Target Group</Label>
+          <Controller
+            name="targetGroup"
+            control={control}
+            rules={{ required: "Target group is required" }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select target group" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beta-testers">Beta Testers</SelectItem>
+                  <SelectItem value="premium-users">Premium Users</SelectItem>
+                  <SelectItem value="admin-users">Admin Users</SelectItem>
+                  <SelectItem value="all-users">All Users</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.targetGroup && <p className="text-sm text-red-500">{errors.targetGroup.message}</p>}
+        </div>
+
+        <div className="flex items-center justify-between">
+          <Label htmlFor="enabled">Enabled</Label>
+          <Controller
+            name="enabled"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                id="enabled"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+
+        <Button type="submit" className="w-full">
+          Add Feature Flag
+        </Button>
+      </form>
+    </DialogContent>
           </Dialog>
         </CardHeader>
         <CardContent>
@@ -351,7 +453,7 @@ const PaywallControl =() => {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {flag.targetGroups.map((group) => (
+                        {flag.targetGroups.map((group:any) => (
                           <Badge key={group} variant="outline" className="text-xs">
                             {group}
                           </Badge>
@@ -372,7 +474,7 @@ const PaywallControl =() => {
             </Table>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   )
 }
