@@ -1,8 +1,11 @@
 import { useState } from "react"
 import {  motion } from "motion/react"
-import { User, Coffee, LayoutDashboard, Bell, Megaphone, CreditCard, ShoppingBasket, NotebookTabs, UsersIcon, Ban, Logs, Menu, X, Shield, LucideMilestone } from "lucide-react"
+import { User, Coffee, LayoutDashboard, Bell, Megaphone, CreditCard, ShoppingBasket, NotebookTabs, UsersIcon, Ban, Logs, Menu, X, Shield, LucideMilestone, LogOut } from "lucide-react"
 import { cn } from "../../lib/utils"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useAppDispatch } from "../../redux/hook"
+import { logOut } from "../../redux/features/auth/authSlice"
+import { Button } from "../ui/button"
 
 const tabs = [
   { name: "User Management", icon: User, path: "user-management" },
@@ -23,6 +26,15 @@ const tabs = [
 const MobileNavbar =()=> {
   const [activeIndex, setActiveIndex] = useState(0)
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+      // Clear auth tokens or user session data
+      // Navigate to login
+      navigate("/");
+      dispatch(logOut());
+    };
 
   return (
     <div className="transition-all duration-500 ease-in-out">
@@ -95,6 +107,10 @@ const MobileNavbar =()=> {
           </Link>
         )
       })}
+      <Button className={`${open ? "flex" : "hidden"}`} onClick={handleLogout}>
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </Button>
     </div>
     </div>
   )
