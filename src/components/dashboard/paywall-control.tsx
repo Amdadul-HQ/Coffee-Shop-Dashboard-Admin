@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Plus, Settings } from "lucide-react"
 import { Switch } from "../ui/switch"
-import { useAdminPaywallControlMutation, useAdminpaywallControlQuery } from "../../redux/features/admin/adminNotification"
+import { useAdminPaywallControlMutation, useAdminpaywallControlQuery, useAdminPaywallControlUpdateMutation } from "../../redux/features/admin/adminNotification"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -26,6 +26,7 @@ const PaywallControl =() => {
 
   const {data,isLoading} = useAdminpaywallControlQuery(undefined)
   const [adminPaywallControl,{isLoading:isPaywallControlLoading}] =useAdminPaywallControlMutation()
+  const [adminPaywallControlUpdate,{isLoading:isPaywallUpdateLoading}] = useAdminPaywallControlUpdateMutation()
   // const [features, setFeatures] = useState<Feature[]>([
     //   {
       //     id: "1",
@@ -131,7 +132,7 @@ const PaywallControl =() => {
               },
             })
 
-            if(isLoading || isPaywallControlLoading) return <div>Loading...</div>
+            if(isLoading || isPaywallControlLoading || isPaywallUpdateLoading) return <div>Loading...</div>
             const features = data?.data || []
             const onSubmit = async(data: FeatureFlagFormData) => {
               console.log(data)
@@ -321,7 +322,7 @@ const PaywallControl =() => {
                       <div className="flex items-center space-x-2">
                         <Switch
                           checked={feature.enabled}
-                          // onCheckedChange={() => toggleFeature(feature.id, "isEnabled")}
+                          onCheckedChange={() => adminPaywallControlUpdate({id:feature.id, data:{ enabled:!feature.enabled }})}
                         />
                         <span className="text-sm">{feature.enabled ? "Enabled" : "Disabled"}</span>
                       </div>

@@ -29,7 +29,6 @@ export default function LoginForm() {
              password: data.password,
            };
            const res = await login(userInfo).unwrap();
-           console.log(res,'user res')
            const user = verifyToken(res.data.token) as TUser;
            dispatch(setUser({ user:res?.data, token: res.data.token }));
            toast.success("Login successful", {

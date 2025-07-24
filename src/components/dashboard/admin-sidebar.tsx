@@ -1,4 +1,4 @@
-import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs, LucideMilestone, Shield } from "lucide-react"
+import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs, LucideMilestone, Shield, LogOut } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -9,7 +9,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem, } from "../ui/sidebar"
-import { NavLink, useLocation } from "react-router-dom"
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
+import { useAppDispatch } from "../../redux/hook"
+import { logOut } from "../../redux/features/auth/authSlice"
 
 
 
@@ -96,6 +98,15 @@ const AdminSidebar =() => {
   ]
 
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    // Clear auth tokens or user session data
+    // Navigate to login
+    navigate("/");
+    dispatch(logOut());
+  };
 
   return (
     <Sidebar>
@@ -120,6 +131,14 @@ const AdminSidebar =() => {
                   </NavLink>
                 </SidebarMenuItem>
               ))}
+
+               {/* Logout Item */}
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout}>
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
