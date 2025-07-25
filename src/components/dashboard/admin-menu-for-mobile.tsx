@@ -1,6 +1,6 @@
 import { useState } from "react"
 import {  motion } from "motion/react"
-import { User, Coffee, LayoutDashboard, Bell, Megaphone, CreditCard, ShoppingBasket, NotebookTabs, UsersIcon, Ban, Logs, Menu, X, Shield, LucideMilestone, LogOut, Settings2, icons, LucideTowerControl } from "lucide-react"
+import { User, Coffee, LayoutDashboard, Bell, Megaphone, CreditCard, ShoppingBasket, NotebookTabs, UsersIcon, Ban, Logs, Menu, X, Shield, LucideMilestone, LogOut, Settings2, LucideTowerControl } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Link, useNavigate } from "react-router-dom"
 import { useAppDispatch } from "../../redux/hook"
