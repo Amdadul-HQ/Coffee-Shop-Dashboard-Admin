@@ -260,9 +260,16 @@ adminGetBanIpDetails:builder.query({
       method: 'PATCH',
       body: data,
     }),
+    invalidatesTags: ['paywallControl'],
+  }),
+  adminPaywallControlDelete:builder.mutation({
+    query:({id}) => ({
+      url:`/admin/paywall/${id}`,
+      method:"DELETE"
+    }),
     invalidatesTags:['paywallControl']
   })
   })
 })
 
-export const {useAdminPaywallControlUpdateMutation,useAdminPaywallControlMutation,useAdminpaywallControlQuery,useAdminGetLogQuery,useAdminLogDeleteMutation,useAdminLogsQuery,useUserUnBanMutation,useUserBanMutation,useDeleteBanIpMutation,useCreateBanIpMutation,useAdminGetBanIpDetailsQuery,useAdminGetAllIdBanQuery,useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification
+export const {useAdminPaywallControlDeleteMutation,useAdminPaywallControlUpdateMutation,useAdminPaywallControlMutation,useAdminpaywallControlQuery,useAdminGetLogQuery,useAdminLogDeleteMutation,useAdminLogsQuery,useUserUnBanMutation,useUserBanMutation,useDeleteBanIpMutation,useCreateBanIpMutation,useAdminGetBanIpDetailsQuery,useAdminGetAllIdBanQuery,useGetCustomerDetailsQuery, useGetAllCustomerQuery,useGetProductQuery,useGetAllProductQuery,useCreatePlanMutation,useAllPlanQuery,useGetNoteQuery,useDeleteNoteMutation,useUpdateNoteMutation,useSetNotesMutation,useGetAllNotesQuery,useAdminGetAllNotificationsQuery,useDeleteNotificationMutation,useAdminSendUserNotificationMutation,useAdminAnnoucementMutation,useAdminGetAllAnnouncementsQuery,useDeleteAnnouncementMutation,useUpdateAnnouncementMutation,useAdminGetAllNotificationQuery} = adminNotification

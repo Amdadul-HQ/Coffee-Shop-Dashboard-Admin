@@ -6,11 +6,13 @@ import { Label } from "../ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { Plus, Settings } from "lucide-react"
+import { Plus, Settings, Trash } from "lucide-react"
 import { Switch } from "../ui/switch"
-import { useAdminPaywallControlMutation, useAdminpaywallControlQuery, useAdminPaywallControlUpdateMutation } from "../../redux/features/admin/adminNotification"
+import { useAdminPaywallControlDeleteMutation, useAdminPaywallControlMutation, useAdminpaywallControlQuery, useAdminPaywallControlUpdateMutation } from "../../redux/features/admin/adminNotification"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
+import DeleteConfirmDialog from "./notes-delete"
+import { useState } from "react"
 
 
 type FeatureFlagFormData = {
@@ -27,6 +29,23 @@ const PaywallControl =() => {
   const {data,isLoading} = useAdminpaywallControlQuery(undefined)
   const [adminPaywallControl,{isLoading:isPaywallControlLoading}] =useAdminPaywallControlMutation()
   const [adminPaywallControlUpdate,{isLoading:isPaywallUpdateLoading}] = useAdminPaywallControlUpdateMutation()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedId,setSelectedId] = useState<string | null>()
+  const [deletePaywall,{isLoading:isDeleting}]= useAdminPaywallControlDeleteMutation()
+
+  const confirmDelete = async () => {
+      if (!selectedId) return
+  
+      try {
+        await deletePaywall({id:selectedId}).unwrap()
+        toast.success("Paywall removed successfully")
+        setDeleteDialogOpen(false)
+        setSelectedId(null)
+      } catch (error) {
+        toast.error("Failed to remove ban")
+        console.error("Delete ban error:", error)
+      }
+    }
   // const [features, setFeatures] = useState<Feature[]>([
     //   {
       //     id: "1",
@@ -132,7 +151,7 @@ const PaywallControl =() => {
               },
             })
 
-            if(isLoading || isPaywallControlLoading || isPaywallUpdateLoading) return <div>Loading...</div>
+            // if(isLoading || isPaywallControlLoading || isPaywallUpdateLoading) return <div>Loading...</div>
             const features = data?.data || []
             const onSubmit = async(data: FeatureFlagFormData) => {
               console.log(data)
@@ -231,14 +250,41 @@ const PaywallControl =() => {
         </div>
 
         <div>
-          <Label htmlFor="feature-key">Feature Key</Label>
-          <Input
+          <Label htmlFor="featurekey">Feature Key</Label>
+          {/* <Input
             id="feature-key"
             placeholder="Enter feature key"
             {...register("featureKey", { required: "Feature key is required" })}
+          /> */}
+          <Controller
+            name="featureKey"
+            control={control}
+            rules={{ required: "Target group is required" }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Feature Key" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="share">Share</SelectItem>
+                  <SelectItem value="cafe-log">Cafe log</SelectItem>
+                  <SelectItem value="analytics">Analytics</SelectItem>
+                  <SelectItem value="export">Export</SelectItem>
+                  {/* <SelectItem value="admin-users">Admin Users</SelectItem> */}
+                  {/* <SelectItem value="all-users">All Users</SelectItem> */}
+                </SelectContent>
+              </Select>
+            )}
           />
           {errors.featureKey && <p className="text-sm text-red-500">{errors.featureKey.message}</p>}
         </div>
+
+        {/* export enum FeatureKey {
+  SHARE = 'share',
+  CAFE_LOG = 'cafe-log',
+  ANALYTICS = 'analytics',
+  EXPORT = 'export',
+} */}
 
         <div>
           <Label htmlFor="flag-description">Description</Label>
@@ -304,6 +350,7 @@ const PaywallControl =() => {
                   <TableHead>Type</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Behind Paywall</TableHead>
+                  <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -333,10 +380,23 @@ const PaywallControl =() => {
                         <span className="text-sm">{feature.plan === "pro" ? "Paid" : "Free"}</span>
                       </div>
                     </TableCell>
+                    <TableCell>
+                      <div onClick={()=>{setSelectedId(feature.id);setDeleteDialogOpen(true)}} className="flex items-end">
+                         <Trash/>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+            <DeleteConfirmDialog
+            open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+            title="Delete Paywall Feature?"
+  description="Are you sure you want to delete this paywall feature? This action cannot be undone."
+            />
           </div>
         </CardContent>
       </Card>
