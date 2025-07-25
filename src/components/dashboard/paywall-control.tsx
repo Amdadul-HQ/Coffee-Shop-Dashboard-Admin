@@ -26,9 +26,9 @@ type FeatureFlagFormData = {
 
 const PaywallControl =() => {
 
-  const {data,isLoading} = useAdminpaywallControlQuery(undefined)
-  const [adminPaywallControl,{isLoading:isPaywallControlLoading}] =useAdminPaywallControlMutation()
-  const [adminPaywallControlUpdate,{isLoading:isPaywallUpdateLoading}] = useAdminPaywallControlUpdateMutation()
+  const {data} = useAdminpaywallControlQuery(undefined)
+  const [adminPaywallControl] =useAdminPaywallControlMutation()
+  const [adminPaywallControlUpdate] = useAdminPaywallControlUpdateMutation()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedId,setSelectedId] = useState<string | null>()
   const [deletePaywall,{isLoading:isDeleting}]= useAdminPaywallControlDeleteMutation()
