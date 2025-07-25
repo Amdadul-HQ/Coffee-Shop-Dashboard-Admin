@@ -33,7 +33,6 @@ export default function BanDetailsDialog({ banId, open, onOpenChange }: BanDetai
       second: "2-digit",
     })
   }
-
   const isExpired = (expiresAt: string | null) => {
     if (!expiresAt) return false
     return new Date(expiresAt) < new Date()
