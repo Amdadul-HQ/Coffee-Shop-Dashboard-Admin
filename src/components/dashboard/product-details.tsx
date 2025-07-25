@@ -20,18 +20,15 @@ interface ProductDetailsDialogProps {
 export default function ProductDetailsDialog({
   stripeProductId,
   open,
-  onOpenChange,
-  dbProducts,
-  stripeProducts,
+  onOpenChange
 }: ProductDetailsDialogProps) {
-  const dbProduct = dbProducts.find((product) => product.stripeProductId === stripeProductId)
-  const stripeProduct = stripeProducts.find((product) => product.id === stripeProductId)
+  // const dbProduct = dbProducts.find((product) => product.stripeProductId === stripeProductId)
+  // const stripeProduct = stripeProducts.find((product) => product.id === stripeProductId)
 
   const {
+    data,
     isLoading: isLoadingDetails,
-  } = useGetProductQuery(stripeProductId!, {
-    skip: !stripeProductId || !open,
-  })
+  } = useGetProductQuery({id:stripeProductId})
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -65,15 +62,15 @@ export default function ProductDetailsDialog({
     }
   }
 
-  if (!dbProduct && !stripeProduct) return null
-
+  const stripeProduct = data?.data
+  const dbProduct = data?.data
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Product Details: {dbProduct?.name || stripeProduct?.name}
+            Product Details: {data?.data?.name || data?.data?.name}
           </DialogTitle>
           <DialogDescription>Complete information about this product</DialogDescription>
         </DialogHeader>
@@ -104,7 +101,7 @@ export default function ProductDetailsDialog({
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-xl">{dbProduct?.name || stripeProduct?.name}</CardTitle>
+                      <CardTitle className="text-xl">{stripeProduct?.name}</CardTitle>
                       <p className="text-muted-foreground">Product ID: {stripeProductId}</p>
                     </div>
                     <Badge variant={stripeProduct?.active ? "default" : "secondary"} className="text-sm">

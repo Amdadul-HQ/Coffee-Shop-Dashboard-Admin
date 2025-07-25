@@ -158,7 +158,7 @@ const adminNotification =  baseApi.injectEndpoints({
       providesTags:["products"]
     }),
     getProduct :builder.query({
-      query:(id)=> ({
+      query:({id})=> ({
         url:`/stripe/get-a-product/${id}`,
         method:"GET"
       })
