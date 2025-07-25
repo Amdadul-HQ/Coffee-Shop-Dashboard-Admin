@@ -358,5 +358,4 @@ const UserAdminNotesList = () => {
     </div>
   )
 }
-
 export default UserAdminNotesList
