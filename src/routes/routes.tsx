@@ -19,6 +19,8 @@ import StripeCustomersList from "../components/dashboard/admin-customer-list";
 import BanManagementList from "../components/dashboard/admin-ban-api-list";
 import AdminAuditLogsList from "../components/dashboard/admin-logs";
 import PlanList from "../components/dashboard/admin-plan-limits";
+import AdminCreadintialsChange from "../components/dashboard/admin-settings";
+import ForgotPasswordFlow from "../pages/auth/forget-password";
 const router = createBrowserRouter([
     {
         path:'/',
@@ -89,7 +91,11 @@ const router = createBrowserRouter([
         {
             path:'plan-limits',
             element:<PlanList/>
-        }
+        },
+        {
+            path:'settings',
+            element:<AdminCreadintialsChange/>
+        },
     ]
     },
     {
@@ -100,6 +106,10 @@ const router = createBrowserRouter([
     {
         path:'/account-suspended',
         element:<AccoutSuspend/>
+    },
+    {
+        path:'/forget-password',
+        element:<ForgotPasswordFlow/>
     }
 ])
 

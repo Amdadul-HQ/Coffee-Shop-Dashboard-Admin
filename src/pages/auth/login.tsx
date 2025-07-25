@@ -2,7 +2,7 @@ import { motion } from "framer-motion"
 import { Button } from "../../components/ui/button"
 import { Mail, Eye, EyeOff, Lock } from "lucide-react"
 import { Input } from "../../components/ui/input"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { FieldValues, useForm } from "react-hook-form"
 import { useAppDispatch } from "../../redux/hook"
 import { useLogingMutation } from "../../redux/features/auth/authApi"
@@ -109,9 +109,9 @@ export default function LoginForm() {
             )}
           </div>
 
-          <div className="flex justify-end text-xs text-yellow-400 cursor-pointer">
+          <Link to='/forget-password' className="flex justify-end text-xs text-yellow-400 cursor-pointer">
             Forgot Password?
-          </div>
+          </Link>
 
           <Button
             type="submit"

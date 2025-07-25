@@ -9,7 +9,34 @@ const authApi = baseApi.injectEndpoints({
         body: userInfo,
       }),
     }),
+    creadintialsChange:builder.mutation({
+      query:(userInfo) => ({
+        url:'/user/update',
+        method:"PATCH",
+        body:userInfo
+      })
+    }),
+    userInformation:builder.query({
+      query:() =>({
+        url:'/user/me',
+        method:"GET"
+      })
+    }),
+    resetCodeSend:builder.mutation({
+      query:({email}) => ({
+        url:`/user/get-password-reset-code`,
+        method:"GET",
+        params: {email}
+      })
+    }),
+    resetPassword:builder.mutation({
+      query:(userInfo) => ({
+        url:'/user/reset-password',
+        method:"POST",
+        body:userInfo
+      })
+    })
   }),
 });
 
-export const {useLogingMutation} = authApi
+export const {useResetCodeSendMutation,useUserInformationQuery,useCreadintialsChangeMutation,useLogingMutation} = authApi
