@@ -21,6 +21,7 @@ import AdminAuditLogsList from "../components/dashboard/admin-logs";
 import PlanList from "../components/dashboard/admin-plan-limits";
 import AdminCreadintialsChange from "../components/dashboard/admin-settings";
 import ForgotPasswordFlow from "../pages/auth/forget-password";
+import AdminManagement from "../components/dashboard/admin-management";
 const router = createBrowserRouter([
     {
         path:'/',
@@ -96,6 +97,10 @@ const router = createBrowserRouter([
             path:'settings',
             element:<AdminCreadintialsChange/>
         },
+        {
+            path:'admin-management',
+            element:<AdminManagement/>
+        }
     ]
     },
     {

@@ -1,4 +1,4 @@
-import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs, LucideMilestone, Shield, LogOut, Settings2 } from "lucide-react"
+import { Users, Settings, Store, ChartNoAxesCombined, Megaphone, Bell, NotebookTabs, CreditCard, ShoppingBasket, UsersIcon, Ban, Logs, LucideMilestone, Shield, LogOut, Settings2, LucideTowerControl } from "lucide-react"
 import { 
     Sidebar,
   SidebarContent,
@@ -35,6 +35,10 @@ const AdminSidebar =() => {
       view: "users" as const,
       path: "user-management"
     },
+    { title: "Admin management",
+      icon: LucideTowerControl, 
+      view: "adminManagement" as const,
+      path:"admin-management"},
     {
       title:"Coffee Shop Management",
       icon : Store,

@@ -75,6 +75,51 @@ const adminManagementApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getAdminManagement:builder.query({
+      query:(args) => {
+        const params = new URLSearchParams();
+        if (args) {
+          args.forEach((item: any) => {
+            params.append(item.name, item.value as string);
+          });
+        }
+        return {
+        url:'/manage-admin',
+        method:"GET",
+        params:params
+      }
+      },
+      providesTags:["admins"]
+    }),
+    createAdmin :builder.mutation({
+      query:(data) => ({
+        url:"/manage-admin",
+        method:"POST",
+        body:data
+      }),
+      invalidatesTags:["admins"]
+    }),
+    getAdminDetail:builder.query({
+      query:({id})=>({
+          url:`/manage-admin/${id}`,
+          method:"GET",
+      })
+    }),
+    updateAdminDetails:builder.mutation({
+      query:({data,id})=>({
+        url:`/manage-admin/${id}`,
+        method:"PATCH",
+        body:data
+      }),
+      invalidatesTags:["admins"]
+    }),
+    deleteAdmin:builder.mutation({
+      query:({id})=>({
+        url:`/manage-admin/${id}`,
+        method:"DELETE"
+      }),
+      invalidatesTags:["admins"]
+    })
   }),
 });
 
@@ -87,4 +132,9 @@ export const {
   useForceLogoutMutation,
   useResetPasswordMutation,
   useGetUserDetailsQuery,
+  useGetAdminManagementQuery,
+  useCreateAdminMutation,
+  useGetAdminDetailQuery,
+  useUpdateAdminDetailsMutation,
+  useDeleteAdminMutation
 } = adminManagementApi;
