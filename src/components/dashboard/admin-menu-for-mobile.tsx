@@ -1,6 +1,6 @@
 import { useState } from "react"
 import {  motion } from "motion/react"
-import { User, Coffee, LayoutDashboard, Bell, Megaphone, CreditCard, ShoppingBasket, NotebookTabs, UsersIcon, Ban, Logs, Menu, X, Shield, LucideMilestone, LogOut } from "lucide-react"
+import { User, Coffee, LayoutDashboard, Bell, Megaphone, CreditCard, ShoppingBasket, NotebookTabs, UsersIcon, Ban, Logs, Menu, X, Shield, LucideMilestone, LogOut, Settings2 } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Link, useNavigate } from "react-router-dom"
 import { useAppDispatch } from "../../redux/hook"
@@ -21,6 +21,7 @@ const tabs = [
   { name: "Customers", icon: UsersIcon, path: "customer" },
   { name: "Ban Ip", icon: Ban, path: "ban-ip" },
   { name: "Admin Logs", icon: Logs, path: "admin-logs" },
+  { name:"Settings", icon: Settings2, path: "settings" },
 ];
 
 const MobileNavbar =()=> {
